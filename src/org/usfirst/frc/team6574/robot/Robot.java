@@ -12,11 +12,9 @@ import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.ExampleSubsystem;
 import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 /**
@@ -35,8 +33,6 @@ public class Robot extends TimedRobot {
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<>();
 	SendableChooser<Boolean> control_chooser = new SendableChooser<>();
-	
-	Gyro gyro = new AnalogGyro(RobotMap.GYRO_ID);
 	
 	boolean usingJoystick = false;
 	

@@ -5,8 +5,12 @@ import org.usfirst.frc.team6574.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
  * Drive train subsystem for control/PID
@@ -21,14 +25,20 @@ public class DriveTrain extends PIDSubsystem {
 	TalonSRX backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
 	TalonSRX backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
 	
+	Compressor compressor = new Compressor();
+	
 	DoubleSolenoid leftShifter = new DoubleSolenoid(0, 1);
 	DoubleSolenoid rightShifter = new DoubleSolenoid(2, 3);
+	
+	Gyro gyro = new AnalogGyro(RobotMap.GYRO_ID);
 	
 	//Encoder leftEncoder = new Encoder(0, 0);
 	//Encoder rightEncoder = new Encoder(0, 0);
 	
 	public DriveTrain(double p, double i, double d) {
 		super(p, i, d);
+		compressor.start();
+		//compressor.setClosedLoopControl(true);
 	}
 
 	@Override
@@ -86,11 +96,13 @@ public class DriveTrain extends PIDSubsystem {
 	}
 	
 	public void engageShifter() {
-		
+		leftShifter.set(Value.kForward);
+		rightShifter.set(Value.kForward);
 	}
 
 	public void disengageShifter() {
-		
+		leftShifter.set(Value.kReverse);
+		rightShifter.set(Value.kReverse);
 	}
 	
 }
