@@ -7,11 +7,14 @@
 
 package org.usfirst.frc.team6574.robot;
 
-import org.usfirst.frc.team6574.robot.commands.ExampleCommand;
+import org.usfirst.frc.team6574.robot.commands.AutoDefault;
+import org.usfirst.frc.team6574.robot.commands.AutoScale;
+import org.usfirst.frc.team6574.robot.commands.AutoSwitch;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.ExampleSubsystem;
 import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -25,14 +28,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
  * project.
  */
 public class Robot extends TimedRobot {
+	
 	public static final ExampleSubsystem kExampleSubsystem = new ExampleSubsystem();
 	public static final DriveTrain drive = new DriveTrain(0, 0, 0);
+	
 	Shooter shooter = new Shooter();
 	public static OI m_oi;
-
+	
+	boolean leftOwnSwitch;
+	boolean leftScale;
+	boolean leftOppositeSwitch;
+	
 	Command m_autonomousCommand;
-	SendableChooser<Command> m_chooser = new SendableChooser<>();
-	SendableChooser<Boolean> control_chooser = new SendableChooser<>();
+	SendableChooser<Command> m_chooser = new SendableChooser<Command>();
+	SendableChooser<Boolean> control_chooser = new SendableChooser<Boolean>();
 	
 	boolean usingJoystick = false;
 	
@@ -59,14 +68,16 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
-		m_chooser.addDefault("Default Auto", new ExampleCommand());
-		m_chooser.addObject("Left Scale Auto", new ExampleCommand());
-		m_chooser.addObject("Right Scale Auto", new ExampleCommand());
-		m_chooser.addObject("Left Switch Auto", new ExampleCommand());
-		m_chooser.addObject("Left Scale Auto", new ExampleCommand());
+		m_chooser.addDefault("Default Auto", new AutoDefault());
+		m_chooser.addObject("Switch Auto", new AutoSwitch());
+		m_chooser.addObject("Scale Auto", new AutoScale());
 		
 		control_chooser.addObject("Use Controller", new Boolean(false));
 		control_chooser.addObject("Use Joystick", new Boolean(true));
+		
+		leftOwnSwitch = false;
+		leftScale = false;
+		leftOppositeSwitch = false;
 	}
 
 	/** 
@@ -101,7 +112,12 @@ public class Robot extends TimedRobot {
 		
 		// GET FMS POSITION
 		
-		//DriverStation.Alliance.values()
+		
+		
+		String positions = DriverStation.getInstance().getGameSpecificMessage();
+		leftOwnSwitch = positions.charAt(0) == 'L' ? true : false;
+		leftScale = positions.charAt(1) == 'L' ? true : false;
+		leftOppositeSwitch = positions.charAt(2) == 'L' ? true : false;
 		
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -122,6 +138,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+		
 	}
 
 	@Override
@@ -145,21 +162,21 @@ public class Robot extends TimedRobot {
 		//
 		// Tank Drive
 		//
-		if (getLeftY() > Constants.CONTROLLER_DEADZONE) {
-			drive.frontLeft(getLeftY() - Constants.CONTROLLER_DEADZONE);
-			drive.backLeft(getLeftY() - Constants.CONTROLLER_DEADZONE);
-		} else if (getLeftY() < -Constants.CONTROLLER_DEADZONE) {
-			drive.frontLeft(getLeftY() + Constants.CONTROLLER_DEADZONE);
-			drive.backLeft(getLeftY() + Constants.CONTROLLER_DEADZONE);
+		if (getLeftY() > Constants.JOYSTICK_MOVE_THRESHOLD) {
+			drive.frontLeft(getLeftY() - Constants.JOYSTICK_MOVE_THRESHOLD);
+			drive.backLeft(getLeftY() - Constants.JOYSTICK_MOVE_THRESHOLD);
+		} else if (getLeftY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
+			drive.frontLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+			drive.backLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
 		} else {
 			drive.stopLeft();
 		}
-		if (getRightY() > Constants.CONTROLLER_DEADZONE) {
-			drive.frontRight(getRightY() - Constants.CONTROLLER_DEADZONE);
-			drive.backRight(getRightY() - Constants.CONTROLLER_DEADZONE);
-		} else if (getRightY() < -Constants.CONTROLLER_DEADZONE) {
-			drive.frontRight(getRightY() + Constants.CONTROLLER_DEADZONE);
-			drive.backRight(getRightY() + Constants.CONTROLLER_DEADZONE);
+		if (getRightY() > Constants.JOYSTICK_MOVE_THRESHOLD) {
+			drive.frontRight(getRightY() - Constants.JOYSTICK_MOVE_THRESHOLD);
+			drive.backRight(getRightY() - Constants.JOYSTICK_MOVE_THRESHOLD);
+		} else if (getRightY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
+			drive.frontRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+			drive.backRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
 		} else {
 			drive.stopRight();
 		}

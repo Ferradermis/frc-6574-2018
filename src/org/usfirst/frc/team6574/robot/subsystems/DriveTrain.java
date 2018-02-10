@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
@@ -29,19 +30,24 @@ public class DriveTrain extends PIDSubsystem {
 	
 	DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
 	
-	//DoubleSolenoid leftShifter = new DoubleSolenoid(0, 1);
-	//DoubleSolenoid rightShifter = new DoubleSolenoid(2, 3);
-	
 	Gyro gyro = new AnalogGyro(RobotMap.GYRO_ID);
 	
-	//Encoder leftEncoder = new Encoder(0, 0);
-	//Encoder rightEncoder = new Encoder(0, 0);
+	Encoder leftEncoder = new Encoder(0, 0);
+	Encoder rightEncoder = new Encoder(0, 0);
 	
 	public DriveTrain(double p, double i, double d) {
 		super(p, i, d);
 		compressor.start();
 		compressor.setClosedLoopControl(true);
 		getPIDController().setContinuous(false);
+		
+		gyro.reset();
+		
+		leftEncoder.setDistancePerPulse(0.0736);
+		rightEncoder.setDistancePerPulse(0.0736);
+		
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 
 	@Override
@@ -75,6 +81,13 @@ public class DriveTrain extends PIDSubsystem {
 		backRight.set(ControlMode.PercentOutput, speed);
 	}
 	
+	public void set(double speed) {
+		frontLeft(speed);
+		frontRight(speed);
+		backLeft(speed);
+		backRight(speed);
+	}
+	
 	/**
 	 * Stops all drive train motors.
 	 * 
@@ -100,14 +113,24 @@ public class DriveTrain extends PIDSubsystem {
 	
 	public void engageShifter() {
 		shifter.set(Value.kForward);
-		//leftShifter.set(Value.kForward);
-		//rightShifter.set(Value.kForward);
 	}
 
 	public void disengageShifter() {
 		shifter.set(Value.kReverse);
-		//leftShifter.set(Value.kReverse);
-		//rightShifter.set(Value.kReverse);
+	}
+	
+	/**
+	 * Gets the average distance of the the left and right drive train encoders since last reset.
+	 * 
+	 * @return	double containing the average distance in inches
+	 */
+	public double getEncoderDist() {
+		return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+	}
+	
+	public void clearEncoders() {
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
 	
 }
