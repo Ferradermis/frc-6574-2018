@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
-		usingJoystick = (Boolean)control_chooser.getSelected();
+		//usingJoystick = (Boolean)control_chooser.getSelected();
 	}
    
 	/**
@@ -174,6 +174,12 @@ public class Robot extends TimedRobot {
 				shooter.spin(Constants.SHOOTER_SPEED_FAST);
 			} else {
 				shooter.stop();
+			}
+			
+			if (m_oi.controller.getRawButton(5)) {
+				drive.engageShifter();
+			} else if (m_oi.controller.getRawButton(6)) {
+				drive.disengageShifter();
 			}
 		}
 	}

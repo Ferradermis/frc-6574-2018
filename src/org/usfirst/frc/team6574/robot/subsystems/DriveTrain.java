@@ -27,8 +27,10 @@ public class DriveTrain extends PIDSubsystem {
 	
 	Compressor compressor = new Compressor();
 	
-	DoubleSolenoid leftShifter = new DoubleSolenoid(0, 1);
-	DoubleSolenoid rightShifter = new DoubleSolenoid(2, 3);
+	DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
+	
+	//DoubleSolenoid leftShifter = new DoubleSolenoid(0, 1);
+	//DoubleSolenoid rightShifter = new DoubleSolenoid(2, 3);
 	
 	Gyro gyro = new AnalogGyro(RobotMap.GYRO_ID);
 	
@@ -38,7 +40,8 @@ public class DriveTrain extends PIDSubsystem {
 	public DriveTrain(double p, double i, double d) {
 		super(p, i, d);
 		compressor.start();
-		//compressor.setClosedLoopControl(true);
+		compressor.setClosedLoopControl(true);
+		getPIDController().setContinuous(false);
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class DriveTrain extends PIDSubsystem {
 
 	@Override
 	protected void usePIDOutput(double output) {
-		
+		//DRIVE TRAIN DRIVE OUTPUT
 	}
 
 	@Override
@@ -96,13 +99,15 @@ public class DriveTrain extends PIDSubsystem {
 	}
 	
 	public void engageShifter() {
-		leftShifter.set(Value.kForward);
-		rightShifter.set(Value.kForward);
+		shifter.set(Value.kForward);
+		//leftShifter.set(Value.kForward);
+		//rightShifter.set(Value.kForward);
 	}
 
 	public void disengageShifter() {
-		leftShifter.set(Value.kReverse);
-		rightShifter.set(Value.kReverse);
+		shifter.set(Value.kReverse);
+		//leftShifter.set(Value.kReverse);
+		//rightShifter.set(Value.kReverse);
 	}
 	
 }
