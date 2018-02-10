@@ -33,10 +33,10 @@ public class DriveTrain extends PIDSubsystem {
 	DoubleSolenoid shifter;
 	
 	Gyro gyro;
-	
+	/*
 	Encoder leftEncoder;
 	Encoder rightEncoder;
-	
+	*/
 	public DriveTrain(double p, double i, double d) {
 		super(p, i, d);
 		
@@ -44,10 +44,19 @@ public class DriveTrain extends PIDSubsystem {
 		frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
 		backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
 		backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
+		//backLeft.follow(frontLeft);
+		//backRight.follow(frontRight);
 		
 		frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 		frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		//frontLeft.getSensorCollection().get
+		
+		//frontLeft.config
+		//frontLeft.getSensorCollection().getQuadrature();
+		//frontRight.getSensorCollection().getQuadraturePosition();
+		
+		//setInputRange(0, 0);
+		setOutputRange(-1, 1);
+		setPercentTolerance(1);
 		
 		compressor = new Compressor();
 		compressor.start();
@@ -60,18 +69,21 @@ public class DriveTrain extends PIDSubsystem {
 		
 		shifter = new DoubleSolenoid(0, 1);
 		
+		/*
 		leftEncoder = new Encoder(RobotMap.encoder.LEFT_A_CHANNEL, RobotMap.encoder.LEFT_B_CHANNEL);
 		rightEncoder = new Encoder(RobotMap.encoder.RIGHT_A_CHANNEL, RobotMap.encoder.RIGHT_B_CHANNEL);
 		leftEncoder.setDistancePerPulse(Constants.ENCODER_PULSE_DISTANCE);
-		rightEncoder.setDistancePerPulse(0.0736);
+		rightEncoder.setDistancePerPulse(Constants.ENCODER_PULSE_DISTANCE);
 		
 		leftEncoder.reset();
 		rightEncoder.reset();
+		*/
+		getPIDController().onTarget();
 	}
 
 	@Override
 	protected double returnPIDInput() {
-		return 0;
+		return frontLeft.getSensorCollection().getQuadraturePosition();
 	}
 
 	@Override
@@ -85,19 +97,24 @@ public class DriveTrain extends PIDSubsystem {
 	}
 	
 	public void frontLeft(double speed) {
-		frontLeft.set(ControlMode.PercentOutput, -speed);
+		frontLeft.set(ControlMode.PercentOutput, speed);
+		//MASTER
 	}
 	
 	public void frontRight(double speed) {
-		frontRight.set(ControlMode.PercentOutput, speed);
+		frontRight.set(ControlMode.PercentOutput, -speed);
+		//MASTER
 	}
 	
 	public void backLeft(double speed) {
-		backLeft.set(ControlMode.PercentOutput, -speed);
+		backLeft.set(ControlMode.PercentOutput, speed);
+		//FOLLOWER MODE/SLAVE
 	}
 	
 	public void backRight(double speed) {
-		backRight.set(ControlMode.PercentOutput, speed);
+		backRight.set(ControlMode.PercentOutput, -speed);
+		//backRight.set(ControlMode.Follower, speed);
+		//FOLLOWER MODE/SLAVE
 	}
 	
 	public void set(double speed) {
@@ -144,12 +161,31 @@ public class DriveTrain extends PIDSubsystem {
 	 * @return	double containing the average distance in inches
 	 */
 	public double getEncoderDist() {
-		return (leftEncoder.getDistance() + rightEncoder.getDistance()) / 2;
+		return ((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;
 	}
 	
 	public void clearEncoders() {
+		frontLeft.getSensorCollection().setQuadraturePosition(0, 0);
+		frontRight.getSensorCollection().setQuadraturePosition(0, 0);
+		/*
 		leftEncoder.reset();
 		rightEncoder.reset();
+		*/
 	}
 	
+	public double getLeftVelocity() {
+		return frontLeft.getSensorCollection().getQuadratureVelocity();
+	}
+	
+	public double getRightVelocity() {
+		return frontRight.getSensorCollection().getQuadratureVelocity();
+	}
+	
+	public double getGyroAngle() {
+		return gyro.getAngle();
+	}
+	
+	public void resetGyro() {
+		gyro.reset();
+	}
 }

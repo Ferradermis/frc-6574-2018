@@ -17,6 +17,7 @@ public abstract class AutoCommand extends Command {
 	@Override
 	protected void initialize() {
 		encoderDist = 0;
+		Robot.drive.clearEncoders();
 		position = DriverStation.getInstance().getLocation();
 	}
 	

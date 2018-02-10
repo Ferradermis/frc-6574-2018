@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -165,6 +166,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
+		
+		SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
+		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
+		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
+		
+		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
+		
 		//
 		// Tank Drive
 		//
