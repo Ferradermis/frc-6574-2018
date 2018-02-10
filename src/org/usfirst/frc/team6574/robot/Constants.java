@@ -12,8 +12,17 @@ public class Constants {
 	 */
 	public static final double AUTO_SPEED = 0.7;
 	
+	/**
+	 * The proportional value used for the drive train's PID control
+	 */
 	public static final double DRIVE_PID_P = 0.0;
+	/**
+	 * The integral value used for the drive train's PID control
+	 */
 	public static final double DRIVE_PID_I = 0.0;
+	/**
+	 * The derivative value used for the drive train's PID control
+	 */
 	public static final double DRIVE_PID_D = 0.0;
 	
 	public static final boolean USE_DUAL_JOYSTICK = false;
@@ -41,12 +50,15 @@ public class Constants {
 	 */
 	public static final String PI_IP = "10.65.74.5";
 	
+	public static final double ENCODER_PULSE_DISTANCE = 0.0736;
+	
 	/**
 	 * Distances (in inches) of important auto movements
 	 */
 	public static class dist {
 		public static final double WALL_TO_SWITCH_SIDE = 0.0;
 		public static final double WALL_TO_SCALE_SIDE = 0.0;
+		public static final double AUTO_TEST = 240.0;
 	}
 	
 }

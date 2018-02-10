@@ -130,6 +130,9 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.start();
 		}
+		
+		drive.clearEncoders();
+		
 	}
 	
 	/**
@@ -139,6 +142,9 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		
+		if (drive.getEncoderDist() < Constants.dist.AUTO_TEST) {
+			drive.set(Constants.AUTO_SPEED);
+		}
 	}
 
 	@Override

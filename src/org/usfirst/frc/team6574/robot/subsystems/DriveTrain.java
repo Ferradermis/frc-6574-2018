@@ -1,11 +1,13 @@
 package org.usfirst.frc.team6574.robot.subsystems;
 
+import org.usfirst.frc.team6574.robot.Constants;
 import org.usfirst.frc.team6574.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -21,29 +23,46 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
  */
 public class DriveTrain extends PIDSubsystem {
 	
-	TalonSRX frontLeft = new TalonSRX(RobotMap.driveTrain.FRONT_LEFT_CAN_ID);
-	TalonSRX frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
-	TalonSRX backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
-	TalonSRX backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
+	TalonSRX frontLeft;
+	TalonSRX frontRight;
+	TalonSRX backLeft;
+	TalonSRX backRight;
 	
-	Compressor compressor = new Compressor();
+	Compressor compressor;
 	
-	DoubleSolenoid shifter = new DoubleSolenoid(0, 1);
+	DoubleSolenoid shifter;
 	
-	Gyro gyro = new AnalogGyro(RobotMap.GYRO_ID);
+	Gyro gyro;
 	
-	Encoder leftEncoder = new Encoder(0, 0);
-	Encoder rightEncoder = new Encoder(0, 0);
+	Encoder leftEncoder;
+	Encoder rightEncoder;
 	
 	public DriveTrain(double p, double i, double d) {
 		super(p, i, d);
+		
+		frontLeft = new TalonSRX(RobotMap.driveTrain.FRONT_LEFT_CAN_ID);
+		frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
+		backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
+		backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
+		
+		frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		//frontLeft.getSensorCollection().get
+		
+		compressor = new Compressor();
 		compressor.start();
 		compressor.setClosedLoopControl(true);
+		
 		getPIDController().setContinuous(false);
 		
+		gyro = new ADXRS450_Gyro();
 		gyro.reset();
 		
-		leftEncoder.setDistancePerPulse(0.0736);
+		shifter = new DoubleSolenoid(0, 1);
+		
+		leftEncoder = new Encoder(RobotMap.encoder.LEFT_A_CHANNEL, RobotMap.encoder.LEFT_B_CHANNEL);
+		rightEncoder = new Encoder(RobotMap.encoder.RIGHT_A_CHANNEL, RobotMap.encoder.RIGHT_B_CHANNEL);
+		leftEncoder.setDistancePerPulse(Constants.ENCODER_PULSE_DISTANCE);
 		rightEncoder.setDistancePerPulse(0.0736);
 		
 		leftEncoder.reset();

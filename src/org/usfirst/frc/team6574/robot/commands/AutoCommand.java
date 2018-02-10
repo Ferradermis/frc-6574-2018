@@ -15,6 +15,7 @@ public abstract class AutoCommand extends Command {
 	}
 	
 	@Override
+	protected void initialize() {
 		encoderDist = 0;
 		position = DriverStation.getInstance().getLocation();
 	}
