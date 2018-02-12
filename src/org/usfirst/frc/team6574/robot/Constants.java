@@ -37,19 +37,6 @@ public class Constants {
 	 */
 	public static final double SHOOTER_SPEED_SLOW = 0.6;
 	
-	/**
-	 * The IP address of the radio on the robot's network
-	 */
-	public static final String RADIO_IP = "10.65.74.1";
-	/**
-	 * The IP address of the RoboRio on the robot's network
-	 */
-	public static final String RIO_IP = "10.65.74.2";
-	/**
-	 * The IP address of the Raspberry Pi on the robot's network
-	 */
-	public static final String PI_IP = "10.65.74.5";
-	
 	public static final double ENCODER_PULSE_DISTANCE = 0.0736;
 	
 	/**
@@ -59,6 +46,10 @@ public class Constants {
 		public static final double WALL_TO_SWITCH_SIDE = 0.0;
 		public static final double WALL_TO_SCALE_SIDE = 0.0;
 		public static final double AUTO_TEST = 240.0;
+	}
+	
+	public static class input {
+		
 	}
 	
 }
