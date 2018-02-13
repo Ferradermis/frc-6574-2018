@@ -62,7 +62,7 @@ public class RobotMap {
 		/**
 		 * The USB ID value assigned to the game controller.
 		 */
-		public static final int CONTROLLER_USB_NUM = 0;
+		public static final int CONTROLLER_USB_NUM = 2;
 	}
 	
 	/**

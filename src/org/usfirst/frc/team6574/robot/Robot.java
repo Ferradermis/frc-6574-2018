@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
 	
 	Command m_autonomousCommand;
 	SendableChooser<Command> m_chooser = new SendableChooser<Command>();
-	SendableChooser<Boolean> control_chooser = new SendableChooser<Boolean>();
+	SendableChooser<Boolean> control_chooser;
 	
 	boolean usingJoystick = false;
 	
@@ -73,12 +73,15 @@ public class Robot extends TimedRobot {
 		m_chooser.addObject("Switch Auto", new AutoSwitch());
 		m_chooser.addObject("Scale Auto", new AutoScale());
 		
-		control_chooser.addObject("Use Controller", new Boolean(false));
-		control_chooser.addObject("Use Joystick", new Boolean(true));
+		//control_chooser = new SendableChooser<Boolean>();
+		//control_chooser.addObject("Use Controller", new Boolean(true));
+		//control_chooser.addObject("Use Joystick", new Boolean(false));
+		//SmartDashboard.putData("Control chooser", control_chooser);
 		
 		leftOwnSwitch = false;
 		leftScale = false;
 		leftOppositeSwitch = false;
+		
 	}
 
 	/** 
@@ -95,6 +98,8 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
 	}
+	
+	double distanceMoved = 0;
 
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
@@ -113,7 +118,7 @@ public class Robot extends TimedRobot {
 		
 		// GET FMS POSITION
 		
-		
+		distanceMoved = 0;
 		
 		String positions = DriverStation.getInstance().getGameSpecificMessage();
 		leftOwnSwitch = positions.charAt(0) == 'L' ? true : false;
@@ -143,9 +148,17 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
 		
-		if (drive.getEncoderDist() < Constants.dist.AUTO_TEST) {
+		SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
+		SmartDashboard.putNumber("Left encoder distance", drive.getLeftDistance());
+		SmartDashboard.putNumber("Right encoder distance", drive.getRightDistance());
+		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
+		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
+		
+		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
+		
+		/*if (drive.getEncoderDist() < Constants.dist.AUTO_TEST) {
 			drive.set(Constants.AUTO_SPEED);
-		}
+		}*/
 	}
 
 	@Override
@@ -157,6 +170,9 @@ public class Robot extends TimedRobot {
 		if (m_autonomousCommand != null) {
 			m_autonomousCommand.cancel();
 		}
+		
+		distanceMoved = 0;
+		drive.clearEncoders();
 		//usingJoystick = (Boolean)control_chooser.getSelected();
 	}
    
@@ -166,9 +182,59 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		//7900 "POSITION" per revolution
+		//if (distanceMoved < )
+		/*
+		if (distanceMoved < 120.0 * (9.96/13.0)) {
+			distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+			SmartDashboard.putNumber("Encoder dist", distanceMoved);
+			drive.set(0.6);
+		} else {
+			drive.set(0);
+		}*/
+		
+		
+		if (usingJoystick) {			
+			if (m_oi.leftJoystick.getRawButton(12)) {
+				drive.clearEncoders();
+			}
+			if (m_oi.leftJoystick.getRawButton(11)) {
+				drive.resetGyro();
+			}
+			if (m_oi.leftJoystick.getRawButton(3)) {
+				drive.engageShifter();
+			} else if (m_oi.leftJoystick.getRawButton(4)) {
+				drive.disengageShifter();
+			}
+		} else {
+			if (m_oi.controller.getRawButton(2)) {
+				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
+			} else if (m_oi.controller.getRawButton(1)) {
+				shooter.spin(-Constants.SHOOTER_SPEED_FAST);
+			} else if (m_oi.controller.getRawButton(3)) {
+				shooter.spin(Constants.SHOOTER_SPEED_SLOW);
+			} else if (m_oi.controller.getRawButton(4)) {
+				shooter.spin(Constants.SHOOTER_SPEED_FAST);
+			} else {
+				shooter.stop();
+			}
+			
+			if (m_oi.controller.getRawButton(9)) {
+				drive.resetGyro();
+				drive.clearEncoders();
+			}
+			
+			if (m_oi.controller.getRawButton(5)) {
+				drive.engageShifter();
+			} else if (m_oi.controller.getRawButton(6)) {
+				drive.disengageShifter();
+			}
+		}
 		
 		
 		SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
+		SmartDashboard.putNumber("Left encoder distance", drive.getLeftDistance());
+		SmartDashboard.putNumber("Right encoder distance", drive.getRightDistance());
 		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
 		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
 		
@@ -183,6 +249,8 @@ public class Robot extends TimedRobot {
 		} else if (getLeftY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
 			drive.frontLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
 			drive.backLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
+			drive.set(0.6);
 		} else {
 			drive.stopLeft();
 		}
@@ -192,27 +260,10 @@ public class Robot extends TimedRobot {
 		} else if (getRightY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
 			drive.frontRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
 			drive.backRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
+			drive.set(0.4);
 		} else {
 			drive.stopRight();
-		}
-		if (!usingJoystick /*Constants.USE_CONTROLLER*/) {
-			if (m_oi.controller.getRawButton(2)) {
-				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
-			} else if (m_oi.controller.getRawButton(1)) {
-				shooter.spin(-Constants.SHOOTER_SPEED_FAST);
-			} else if (m_oi.controller.getRawButton(3)) {
-				shooter.spin(Constants.SHOOTER_SPEED_SLOW);
-			} else if (m_oi.controller.getRawButton(4)) {
-				shooter.spin(Constants.SHOOTER_SPEED_FAST);
-			} else {
-				shooter.stop();
-			}
-			
-			if (m_oi.controller.getRawButton(5)) {
-				drive.engageShifter();
-			} else if (m_oi.controller.getRawButton(6)) {
-				drive.disengageShifter();
-			}
 		}
 	}
 

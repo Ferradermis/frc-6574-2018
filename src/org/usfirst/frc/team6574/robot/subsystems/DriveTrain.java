@@ -183,7 +183,7 @@ public class DriveTrain extends PIDSubsystem {
 	 * @return	a double containing the average distance in inches
 	 */
 	public double getEncoderDist() {
-		return ((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;
+		return (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition()) / 2;/*((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;*/
 	}
 	
 	/**
@@ -210,6 +210,14 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public double getRightVelocity() {
 		return frontRight.getSensorCollection().getQuadratureVelocity();
+	}
+	
+	public double getLeftDistance() {
+		return frontLeft.getSensorCollection().getQuadraturePosition();
+	}
+	
+	public double getRightDistance() {
+		return frontRight.getSensorCollection().getQuadraturePosition();
 	}
 	
 	/**
