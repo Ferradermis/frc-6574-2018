@@ -181,10 +181,11 @@ public class DriveTrain extends PIDSubsystem {
 	/**
 	 * Gets the average distance of the the left and right drive train encoders since last reset.
 	 * 
-	 * @return	a double containing the average distance in inches
+	 * @return	a double containing the average distance (in inches? not really)
 	 */
 	public double getEncoderDist() {
-		return (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition()) / 2;/*((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;*/
+		return (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition()) / 2;
+		/*((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;*/
 	}
 	
 	/**
@@ -213,10 +214,20 @@ public class DriveTrain extends PIDSubsystem {
 		return frontRight.getSensorCollection().getQuadratureVelocity();
 	}
 	
+	/**
+	 * Gets the quadrature position reading from the drive train's left encoder.
+	 * 
+	 * @return	a double containing the encoder's position value (in inches? not really)
+	 */
 	public double getLeftDistance() {
 		return frontLeft.getSensorCollection().getQuadraturePosition();
 	}
 	
+	/**
+	 * Gets the quadrature position reading from the drive train's right encoder.
+	 * 
+	 * @return	a double containing the encoder's position value (in inches? not really)
+	 */
 	public double getRightDistance() {
 		return frontRight.getSensorCollection().getQuadraturePosition();
 	}

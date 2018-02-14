@@ -195,7 +195,19 @@ public class Robot extends TimedRobot {
 			drive.set(0);
 		}*/
 		
-		if (usingJoystick) {			
+		if (usingJoystick) {
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_SLOW_REVERSE)) {
+				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
+			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_FAST_REVERSE)) {
+				shooter.spin(-Constants.SHOOTER_SPEED_FAST);
+			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_SLOW_FORWARD)) {
+				shooter.spin(Constants.SHOOTER_SPEED_SLOW);
+			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_FAST_FORWARD)) {
+				shooter.spin(Constants.SHOOTER_SPEED_FAST);
+			} else {
+				shooter.stop();
+			}
+			
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.CLEAR_ENCODERS)) {
 				drive.clearEncoders();
 			}

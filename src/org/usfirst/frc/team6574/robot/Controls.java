@@ -24,6 +24,26 @@ public class Controls {
 		public static final double DEAD_PERCENT = 0.3;
 		
 		/**
+		 * Joystick button used to the spin the shooter at a slow speed in reverse.
+		 */
+		public static final int SHOOTER_SLOW_REVERSE = 9;
+
+		/**
+		 * Joystick button used to the spin the shooter at a fast speed in reverse.
+		 */
+		public static final int SHOOTER_FAST_REVERSE = 7;
+
+		/**
+		 * Joystick button used to the spin the shooter at a slow speed forward.
+		 */
+		public static final int SHOOTER_SLOW_FORWARD = 10;
+
+		/**
+		 * Joystick button used to the spin the shooter at a fast speed forward.
+		 */
+		public static final int SHOOTER_FAST_FORWARD = 8;
+		
+		/**
 		 * Joystick button number used to clear gyro value.
 		 */
 		public static final int RESET_GYRO = 11;
@@ -46,7 +66,7 @@ public class Controls {
 	}
 	
 	/**
-	 * Contains constants relating to the configuratino of controller inputs.
+	 * Contains constants relating to the configuration of controller inputs.
 	 */
 	public static class controller {
 		
