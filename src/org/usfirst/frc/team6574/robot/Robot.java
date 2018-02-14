@@ -78,6 +78,8 @@ public class Robot extends TimedRobot {
 		//control_chooser.addObject("Use Joystick", new Boolean(false));
 		//SmartDashboard.putData("Control chooser", control_chooser);
 		
+		drive.calibrateGyro();
+		
 		leftOwnSwitch = false;
 		leftScale = false;
 		leftOppositeSwitch = false;
@@ -193,44 +195,45 @@ public class Robot extends TimedRobot {
 			drive.set(0);
 		}*/
 		
-		
 		if (usingJoystick) {			
-			if (m_oi.leftJoystick.getRawButton(12)) {
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.CLEAR_ENCODERS)) {
 				drive.clearEncoders();
 			}
-			if (m_oi.leftJoystick.getRawButton(11)) {
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.RESET_GYRO)) {
 				drive.resetGyro();
 			}
-			if (m_oi.leftJoystick.getRawButton(3)) {
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
 				drive.engageShifter();
-			} else if (m_oi.leftJoystick.getRawButton(4)) {
+			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.DISENGAGE_SHIFTER)) {
 				drive.disengageShifter();
 			}
 		} else {
-			if (m_oi.controller.getRawButton(2)) {
+			if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_SLOW_REVERSE)) {
 				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
-			} else if (m_oi.controller.getRawButton(1)) {
+			} else if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_FAST_REVERSE)) {
 				shooter.spin(-Constants.SHOOTER_SPEED_FAST);
-			} else if (m_oi.controller.getRawButton(3)) {
+			} else if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_SLOW_FORWARD)) {
 				shooter.spin(Constants.SHOOTER_SPEED_SLOW);
-			} else if (m_oi.controller.getRawButton(4)) {
+			} else if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_FAST_FORWARD)) {
 				shooter.spin(Constants.SHOOTER_SPEED_FAST);
 			} else {
 				shooter.stop();
 			}
 			
-			if (m_oi.controller.getRawButton(9)) {
+			if (m_oi.controller.getRawButton(Controls.controller.RESET_GYRO)) {
 				drive.resetGyro();
+			}
+			
+			if (m_oi.controller.getRawButton(Controls.controller.CLEAR_ENCODERS)) {
 				drive.clearEncoders();
 			}
 			
-			if (m_oi.controller.getRawButton(5)) {
+			if (m_oi.controller.getRawButton(Controls.controller.ENGAGE_SHIFTER)) {
 				drive.engageShifter();
-			} else if (m_oi.controller.getRawButton(6)) {
+			} else if (m_oi.controller.getRawButton(Controls.controller.DISENGAGE_SHIFTER)) {
 				drive.disengageShifter();
 			}
 		}
-		
 		
 		SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
 		SmartDashboard.putNumber("Left encoder distance", drive.getLeftDistance());
@@ -243,23 +246,23 @@ public class Robot extends TimedRobot {
 		//
 		// Tank Drive
 		//
-		if (getLeftY() > Constants.JOYSTICK_MOVE_THRESHOLD) {
-			drive.frontLeft(getLeftY() - Constants.JOYSTICK_MOVE_THRESHOLD);
-			drive.backLeft(getLeftY() - Constants.JOYSTICK_MOVE_THRESHOLD);
-		} else if (getLeftY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
-			drive.frontLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
-			drive.backLeft(getLeftY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+		if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
+			drive.frontLeft(getLeftY() - Controls.joystick.DEAD_PERCENT);
+			drive.backLeft(getLeftY() - Controls.joystick.DEAD_PERCENT);
+		} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
+			drive.frontLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
+			drive.backLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
 		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
 			drive.set(0.6);
 		} else {
 			drive.stopLeft();
 		}
-		if (getRightY() > Constants.JOYSTICK_MOVE_THRESHOLD) {
-			drive.frontRight(getRightY() - Constants.JOYSTICK_MOVE_THRESHOLD);
-			drive.backRight(getRightY() - Constants.JOYSTICK_MOVE_THRESHOLD);
-		} else if (getRightY() < -Constants.JOYSTICK_MOVE_THRESHOLD) {
-			drive.frontRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
-			drive.backRight(getRightY() + Constants.JOYSTICK_MOVE_THRESHOLD);
+		if (getRightY() > Controls.joystick.DEAD_PERCENT) {
+			drive.frontRight(getRightY() - Controls.joystick.DEAD_PERCENT);
+			drive.backRight(getRightY() - Controls.joystick.DEAD_PERCENT);
+		} else if (getRightY() < -Controls.joystick.DEAD_PERCENT) {
+			drive.frontRight(getRightY() + Controls.joystick.DEAD_PERCENT);
+			drive.backRight(getRightY() + Controls.joystick.DEAD_PERCENT);
 		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
 			drive.set(0.4);
 		} else {

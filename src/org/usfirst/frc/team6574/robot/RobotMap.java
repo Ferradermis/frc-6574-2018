@@ -55,7 +55,7 @@ public class RobotMap {
 		 */
 		public static final int LEFT_JOYSTICK_USB_NUM = 0;
 		/**
-		 * The USB ID value assigned to the right or seconday joystick.
+		 * The USB ID value assigned to the right or secondary joystick.
 		 */
 		public static final int RIGHT_JOYSTICK_USB_NUM = 1;
 		

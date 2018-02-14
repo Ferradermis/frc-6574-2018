@@ -1,11 +1,14 @@
 package org.usfirst.frc.team6574.robot;
 
+/**
+ * Contains various robot constants. Constants associated with hardware mapping
+ * for the robot should be contained within the RobotMap class, and constants
+ * associated with input device button mapping and configuration should be
+ * contained within the Controls class.
+ * 
+ * @author Zach Brantmeier
+ */
 public class Constants {
-	
-	/**
-	 * The deadzone used for joysticks
-	 */
-	public static final double JOYSTICK_MOVE_THRESHOLD = 0.3;
 	
 	/**
 	 * The default straight driving speed used for autonomous movement
@@ -25,9 +28,6 @@ public class Constants {
 	 */
 	public static final double DRIVE_PID_D = 0.0;
 	
-	public static final boolean USE_DUAL_JOYSTICK = false;
-	public static final boolean USE_CONTROLLER = true;
-	
 	/**
 	 * The fast speed of the shooter
 	 */
@@ -46,10 +46,6 @@ public class Constants {
 		public static final double WALL_TO_SWITCH_SIDE = 0.0;
 		public static final double WALL_TO_SCALE_SIDE = 0.0;
 		public static final double AUTO_TEST = 240.0;
-	}
-	
-	public static class input {
-		
 	}
 	
 }

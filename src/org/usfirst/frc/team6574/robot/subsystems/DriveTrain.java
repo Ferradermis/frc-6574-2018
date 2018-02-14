@@ -14,9 +14,10 @@ import edu.wpi.first.wpilibj.command.PIDSubsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
- * Drive train subsystem for control/PID
+ * A drive train subsystem for control/PID for a CAN-based
+ * tank driven robot.
  * 
- * @author brantmeierz
+ * @author Zach Brantmeier
  */
 public class DriveTrain extends PIDSubsystem {
 	
@@ -66,7 +67,7 @@ public class DriveTrain extends PIDSubsystem {
 		
 		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCN_ID, RobotMap.driveTrain.SHIFT_ON_PCN_ID);
 
-		getPIDController().onTarget();
+		//getPIDController().onTarget();
 	}
 
 	@Override
@@ -234,6 +235,13 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void resetGyro() {
 		gyro.reset();
+	}
+	
+	/**
+	 * Runs early gyroscope calibration.
+	 */
+	public void calibrateGyro() {
+		gyro.calibrate();
 	}
 	
 }
