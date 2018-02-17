@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 	SendableChooser<Command> m_chooser = new SendableChooser<Command>();
 	SendableChooser<Boolean> control_chooser;
 	
-	boolean usingJoystick = false;
+	boolean usingJoystick = true;
 	
 	double getLeftY() {
 		if (usingJoystick/*Constants.USE_DUAL_JOYSTICK*/)
@@ -252,6 +252,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Right encoder distance", drive.getRightDistance());
 		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
 		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
+		
+		SmartDashboard.putNumber("PID error", drive.getPIDController().getError());
+		SmartDashboard.putNumber("PID Setpoint", drive.getPIDController().getSetpoint());
 		
 		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
 		
