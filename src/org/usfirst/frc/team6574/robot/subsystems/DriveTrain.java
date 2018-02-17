@@ -33,7 +33,7 @@ public class DriveTrain extends PIDSubsystem {
 	Gyro gyro;
 
 	/**
-	 * Constructs a drive train object for the robot.
+	 * Constructs a drive train subsystem for the robot.
 	 * 
 	 * @param p	a double containing the proportional value for the PIDSubsystem superclass
 	 * @param i a double containing the integral value for the PIDSubsystem superclass

@@ -9,9 +9,11 @@ package org.usfirst.frc.team6574.robot;
  * @author Zach Brantmeier
  */
 public class Controls {
-	
-	public static final boolean USE_DUAL_JOYSTICK = false;
-	public static final boolean USE_CONTROLLER = true;
+
+	/**
+	 * Whether or not to use single button pneumatics toggle.
+	 */
+	public static final boolean USE_TOGGLE = true;
 	
 	/**
 	 * Contains constants relating to the configuration of joystick inputs.

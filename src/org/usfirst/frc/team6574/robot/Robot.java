@@ -32,22 +32,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 	
-	public static final ExampleSubsystem kExampleSubsystem = new ExampleSubsystem();
+	//public static final ExampleSubsystem kExampleSubsystem = new ExampleSubsystem();
 	
 	public static final DriveTrain drive = new DriveTrain(0, 0, 0);
 	public static final Intake intake = new Intake();
 	public static final Conveyor conveyor = new Conveyor();
+	public static final Shooter shooter = new Shooter();
 	
-	Shooter shooter = new Shooter();
 	public static OI m_oi;
 	
 	boolean leftOwnSwitch;
 	boolean leftScale;
 	boolean leftOppositeSwitch;
 	
-	Command m_autonomousCommand;
-	SendableChooser<Command> m_chooser = new SendableChooser<Command>();
-	SendableChooser<Boolean> control_chooser;
+	//Command m_autonomousCommand;
+	//SendableChooser<Command> m_chooser = new SendableChooser<Command>();
+	//SendableChooser<Boolean> control_chooser;
 	
 	boolean usingJoystick = true;
 	
@@ -57,17 +57,17 @@ public class Robot extends TimedRobot {
 	double intakeSpin = 0.0;
 	
 	double getLeftY() {
-		if (usingJoystick/*Constants.USE_DUAL_JOYSTICK*/)
+		if (usingJoystick)
 			return m_oi.leftJoystick.getY();
-		if (!usingJoystick/*Constants.USE_CONTROLLER*/)
+		if (!usingJoystick)
 			return m_oi.controller.getRawAxis(1);
 		return 0;
 	}
 	
 	double getRightY() {
-		if (usingJoystick/*Constants.USE_DUAL_JOYSTICK*/)
+		if (usingJoystick)
 			return m_oi.rightJoystick.getY();
-		if (!usingJoystick/*Constants.USE_CONTROLLER*/)
+		if (!usingJoystick)
 			return m_oi.controller.getRawAxis(3);	
 		return 0;
 	}
@@ -79,9 +79,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
-		m_chooser.addDefault("Default Auto", new AutoDefault());
-		m_chooser.addObject("Switch Auto", new AutoSwitch());
-		m_chooser.addObject("Scale Auto", new AutoScale());
+		//m_chooser.addDefault("Default Auto", new AutoDefault());
+		//m_chooser.addObject("Switch Auto", new AutoSwitch());
+		//m_chooser.addObject("Scale Auto", new AutoScale());
 		
 		//control_chooser = new SendableChooser<Boolean>();
 		//control_chooser.addObject("Use Controller", new Boolean(true));
@@ -126,7 +126,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_chooser.getSelected();
+		//m_autonomousCommand = m_chooser.getSelected();
 		
 		// GET FMS POSITION
 		
@@ -145,9 +145,9 @@ public class Robot extends TimedRobot {
 		 */
 
 		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.start();
-		}
+		//if (m_autonomousCommand != null) {
+		//	m_autonomousCommand.start();
+		//}
 		
 		drive.clearEncoders();
 		
@@ -173,21 +173,25 @@ public class Robot extends TimedRobot {
 		}*/
 	}
 
+	
+	String controlSelected = "";
 	@Override
 	public void teleopInit() {
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.cancel();
-		}
+		//if (m_autonomousCommand != null) {
+		//	m_autonomousCommand.cancel();
+		//}
 		
 		distanceMoved = 0;
 		drive.clearEncoders();
 		pressingShifter = false;
 		pressingIntake = false;
 		intakeSpin = 0.0;
+		
+		//controlSelected = SmartDashboard.getString("Controls", "Joystick");
 		//usingJoystick = (Boolean)control_chooser.getSelected();
 	}
    
@@ -196,7 +200,12 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
+		//Scheduler.getInstance().run();
+		
+
+		//SmartDashboard.putString("Value", controlSelected);
+		
+		
 		//7900 "POSITION" per revolution
 		//if (distanceMoved < )
 		/*
@@ -239,13 +248,21 @@ public class Robot extends TimedRobot {
 				pressingShifter = false;
 			}
 			
-			if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_INTAKE)) {
-				if (!pressingIntake) {
-					intake.toggleDeploy();
-					pressingIntake = true;
+			if (Controls.USE_TOGGLE) {
+				if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_INTAKE)) {
+					if (!pressingIntake) {
+						intake.toggleDeploy();
+						pressingIntake = true;
+					}
+				} else {
+					pressingIntake = false;
 				}
 			} else {
-				pressingIntake = false;
+				if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
+					drive.engageShifter();
+				} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.DISENGAGE_SHIFTER)) {
+					drive.disengageShifter();
+				}
 			}
 			
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_FORWARD)) {
@@ -261,12 +278,6 @@ public class Robot extends TimedRobot {
 					intakeSpin = 0;
 				}
 			}
-			
-			/*if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
-				drive.engageShifter();
-			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.DISENGAGE_SHIFTER)) {
-				drive.disengageShifter();
-			}*/
 		} else {
 			if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_SLOW_REVERSE)) {
 				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
@@ -287,11 +298,21 @@ public class Robot extends TimedRobot {
 			if (m_oi.controller.getRawButton(Controls.controller.CLEAR_ENCODERS)) {
 				drive.clearEncoders();
 			}
-			
-			if (m_oi.controller.getRawButton(Controls.controller.ENGAGE_SHIFTER)) {
-				drive.engageShifter();
-			} else if (m_oi.controller.getRawButton(Controls.controller.DISENGAGE_SHIFTER)) {
-				drive.disengageShifter();
+			if (Controls.USE_TOGGLE) {
+				if (m_oi.controller.getRawButton(Controls.controller.SHIFT)) {
+					if (!pressingShifter) {
+						drive.toggleShifter();
+						pressingShifter = true;
+					}
+				} else {
+					pressingShifter = false;
+				}
+			} else {
+				if (m_oi.controller.getRawButton(Controls.controller.ENGAGE_SHIFTER)) {
+					drive.engageShifter();
+				} else if (m_oi.controller.getRawButton(Controls.controller.DISENGAGE_SHIFTER)) {
+					drive.disengageShifter();
+				}
 			}
 		}
 		
