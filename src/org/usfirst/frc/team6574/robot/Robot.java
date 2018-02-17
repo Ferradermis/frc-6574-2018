@@ -10,8 +10,10 @@ package org.usfirst.frc.team6574.robot;
 import org.usfirst.frc.team6574.robot.commands.AutoDefault;
 import org.usfirst.frc.team6574.robot.commands.AutoScale;
 import org.usfirst.frc.team6574.robot.commands.AutoSwitch;
+import org.usfirst.frc.team6574.robot.subsystems.Conveyor;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.ExampleSubsystem;
+import org.usfirst.frc.team6574.robot.subsystems.Intake;
 import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,6 +36,7 @@ public class Robot extends TimedRobot {
 	
 	public static final DriveTrain drive = new DriveTrain(0, 0, 0);
 	public static final Intake intake = new Intake();
+	public static final Conveyor conveyor = new Conveyor();
 	
 	Shooter shooter = new Shooter();
 	public static OI m_oi;
@@ -50,6 +53,7 @@ public class Robot extends TimedRobot {
 	
 	boolean pressingShifter = false;
 	boolean pressingIntake = false;
+	
 	double intakeSpin = 0.0;
 	
 	double getLeftY() {
@@ -205,6 +209,7 @@ public class Robot extends TimedRobot {
 		}*/
 		
 		intake.spin(intakeSpin);
+		conveyor.spin(intakeSpin);
 		
 		if (usingJoystick) {
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_SLOW_REVERSE)) {
@@ -244,18 +249,19 @@ public class Robot extends TimedRobot {
 			}
 			
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_FORWARD)) {
-				if (intakeSpin == 0 || intakeSpin == -1) {
-					intakeSpin = 1;
-				} else if (intakeSpin == 1) {
+				if (intakeSpin == 0 || intakeSpin == -Constants.INTAKE_SPEED) {
+					intakeSpin = Constants.INTAKE_SPEED;
+				} else if (intakeSpin == Constants.INTAKE_SPEED) {
 					intakeSpin = 0;
 				}
 			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_BACKWARD)) {
-				if (intakeSpin == 0 || intakeSpin == 1) {
-					intakeSpin = -1;
-				} else if (intakeSpin == -1) {
+				if (intakeSpin == 0 || intakeSpin == Constants.INTAKE_SPEED) {
+					intakeSpin = -Constants.INTAKE_SPEED;
+				} else if (intakeSpin == -Constants.INTAKE_SPEED) {
 					intakeSpin = 0;
 				}
 			}
+			
 			/*if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
 				drive.engageShifter();
 			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.DISENGAGE_SHIFTER)) {

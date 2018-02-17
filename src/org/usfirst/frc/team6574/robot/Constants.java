@@ -11,31 +11,41 @@ package org.usfirst.frc.team6574.robot;
 public class Constants {
 	
 	/**
-	 * The default straight driving speed used for autonomous movement
+	 * The default straight driving speed used for autonomous movement.
 	 */
 	public static final double AUTO_SPEED = 0.7;
 	
 	/**
-	 * The proportional value used for the drive train's PID control
+	 * The proportional value used for the drive train's PID control.
 	 */
 	public static final double DRIVE_PID_P = 0.0;
 	/**
-	 * The integral value used for the drive train's PID control
+	 * The integral value used for the drive train's PID control.
 	 */
 	public static final double DRIVE_PID_I = 0.0;
 	/**
-	 * The derivative value used for the drive train's PID control
+	 * The derivative value used for the drive train's PID control.
 	 */
 	public static final double DRIVE_PID_D = 0.0;
 	
 	/**
-	 * The fast speed of the shooter
+	 * The fast speed of the shooter.
 	 */
 	public static final double SHOOTER_SPEED_FAST = 1.0;
 	/**
-	 * The slow speed of the shooter
+	 * The slow speed of the shooter.
 	 */
 	public static final double SHOOTER_SPEED_SLOW = 0.6;
+	
+	/**
+	 * The speed of the intake arm rollers.
+	 */
+	public static final double INTAKE_SPEED = 0.8;
+	
+	/**
+	 * The speed of the conveyor belt rollers.
+	 */
+	public static final double CONVEYOR_SPEED = 0.8;
 	
 	public static final double ENCODER_PULSE_DISTANCE = 0.0736;
 	

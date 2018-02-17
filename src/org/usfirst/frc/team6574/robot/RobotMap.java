@@ -134,6 +134,20 @@ public class RobotMap {
 	}
 	
 	/**
+	 * Map values associated with the robot's conveyor.
+	 */
+	public static class conveyor {
+		/**
+		 * The PWM output number associated with the conveyor's left Spark motor controller.
+		 */
+		public static final int LEFT_PWM_NUM = 4;
+		/**
+		 * The PWM output number associated with the conveyor's right Spark motor controller.
+		 */
+		public static final int RIGHT_PWM_NUM = 5;
+	}
+	
+	/**
 	 * Map values associated with the robot's encoders.
 	 */
 	public static class encoder {

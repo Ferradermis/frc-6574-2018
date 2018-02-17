@@ -1,4 +1,6 @@
-package org.usfirst.frc.team6574.robot;
+package org.usfirst.frc.team6574.robot.subsystems;
+
+import org.usfirst.frc.team6574.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -13,7 +15,7 @@ public class Intake extends Subsystem {
 	DoubleSolenoid deploy;
 	
 	/**
-	 * Constructs an intake subsystem.
+	 * Constructs an intake subsystem for the robot.
 	 */
 	public Intake() {
 		leftArm = new Spark(RobotMap.intake.LEFT_PWM_NUM);
@@ -59,7 +61,7 @@ public class Intake extends Subsystem {
 	 */
 	public void spin(double speed) {
 		leftArm.set(speed);
-		rightArm.set(speed);
+		rightArm.set(-speed);
 	}
 	
 	/**
