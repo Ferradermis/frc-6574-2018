@@ -63,6 +63,26 @@ public class Controls {
 		 */
 		public static final int DISENGAGE_SHIFTER = 4;
 		 
+		/**
+		 * Joystick button number used to toggle the drive train's shifting mechanism.
+		 */
+		public static final int SHIFT = 3;
+		
+		/**
+		 * Joystick button number used to toggle deployment of the intake mechanism.
+		 */
+		public static final int TOGGLE_INTAKE = 4;
+		
+		/**
+		 * Joystick button number used to spin the intake's arm rollers forward.
+		 */
+		public static final int ARM_FORWARD = 5;
+		
+		/**
+		 * Joystick button number used to spin the intake's arm rollers backward.
+		 */
+		public static final int ARM_BACKWARD = 6;
+		
 	}
 	
 	/**
@@ -109,6 +129,26 @@ public class Controls {
 		 * Controller button number used to disengage the drive train's shifting mechanism.
 		 */
 		public static final int DISENGAGE_SHIFTER = 6;
+		
+		/**
+		 * Controller button number used to toggle the drive train's shifting mechanism.
+		 */
+		public static final int SHIFT = 5;
+		
+		/**
+		 * Controller button number used to toggle deployment of the intake mechanism.
+		 */
+		public static final int TOGGLE_INTAKE = -1;
+		
+		/**
+		 * Controller button number used to spin the intake's arm rollers forward.
+		 */
+		public static final int ARM_FORWARD = -1;
+		
+		/**
+		 * Controller button number used to spin the intake's arm rollers backward.
+		 */
+		public static final int ARM_BACKWARD = -1;
 		
 	}
 	

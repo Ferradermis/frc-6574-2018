@@ -31,7 +31,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends TimedRobot {
 	
 	public static final ExampleSubsystem kExampleSubsystem = new ExampleSubsystem();
+	
 	public static final DriveTrain drive = new DriveTrain(0, 0, 0);
+	public static final Intake intake = new Intake();
 	
 	Shooter shooter = new Shooter();
 	public static OI m_oi;
@@ -45,6 +47,10 @@ public class Robot extends TimedRobot {
 	SendableChooser<Boolean> control_chooser;
 	
 	boolean usingJoystick = true;
+	
+	boolean pressingShifter = false;
+	boolean pressingIntake = false;
+	double intakeSpin = 0.0;
 	
 	double getLeftY() {
 		if (usingJoystick/*Constants.USE_DUAL_JOYSTICK*/)
@@ -175,6 +181,9 @@ public class Robot extends TimedRobot {
 		
 		distanceMoved = 0;
 		drive.clearEncoders();
+		pressingShifter = false;
+		pressingIntake = false;
+		intakeSpin = 0.0;
 		//usingJoystick = (Boolean)control_chooser.getSelected();
 	}
    
@@ -195,6 +204,8 @@ public class Robot extends TimedRobot {
 			drive.set(0);
 		}*/
 		
+		intake.spin(intakeSpin);
+		
 		if (usingJoystick) {
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHOOTER_SLOW_REVERSE)) {
 				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);
@@ -214,11 +225,42 @@ public class Robot extends TimedRobot {
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.RESET_GYRO)) {
 				drive.resetGyro();
 			}
-			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.SHIFT)) {
+				if (!pressingShifter) {
+					drive.toggleShifter();
+					pressingShifter = true;
+				}
+			} else {
+				pressingShifter = false;
+			}
+			
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_INTAKE)) {
+				if (!pressingIntake) {
+					intake.toggleDeploy();
+					pressingIntake = true;
+				}
+			} else {
+				pressingIntake = false;
+			}
+			
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_FORWARD)) {
+				if (intakeSpin == 0 || intakeSpin == -1) {
+					intakeSpin = 1;
+				} else if (intakeSpin == 1) {
+					intakeSpin = 0;
+				}
+			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_BACKWARD)) {
+				if (intakeSpin == 0 || intakeSpin == 1) {
+					intakeSpin = -1;
+				} else if (intakeSpin == -1) {
+					intakeSpin = 0;
+				}
+			}
+			/*if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
 				drive.engageShifter();
 			} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.DISENGAGE_SHIFTER)) {
 				drive.disengageShifter();
-			}
+			}*/
 		} else {
 			if (m_oi.controller.getRawButton(Controls.controller.SHOOTER_SLOW_REVERSE)) {
 				shooter.spin(-Constants.SHOOTER_SPEED_SLOW);

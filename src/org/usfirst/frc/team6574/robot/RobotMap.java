@@ -111,6 +111,29 @@ public class RobotMap {
 	}
 	
 	/**
+	 * Map values associated with the robot's intake.
+	 */
+	public static class intake {
+		/**
+		 * The PWM output number associated with the intake's left Spark motor controller.
+		 */
+		public static final int LEFT_PWM_NUM = 2;
+		/**
+		 * The PWM output number associated with the intake's right Spark motor controller.
+		 */
+		public static final int RIGHT_PWM_NUM = 3;
+		
+		/**
+		 * The PCN port for the solenoid to deploy the intake mechanism.
+		 */
+		public static final int DEPLOY_PCN_ID = 2;
+		/**
+		 * The PCN port for the solenoid to retract mechanism.
+		 */
+		public static final int RETRACT_PCN_ID = 3;
+	}
+	
+	/**
 	 * Map values associated with the robot's encoders.
 	 */
 	public static class encoder {

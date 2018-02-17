@@ -179,6 +179,26 @@ public class DriveTrain extends PIDSubsystem {
 	}
 	
 	/**
+	 * Toggles the drive train's gear shifting mechanism between states.
+	 */
+	public void toggleShifter() {
+		if (isShifted()) {
+			disengageShifter();
+		} else {
+			engageShifter();
+		}
+	}
+	
+	/**
+	 * Gets the status of the pneumatic gear shifter.
+	 * 
+	 * @return	a boolean containing the shifted state
+	 */
+	public boolean isShifted() {
+		return shifter.get() == Value.kForward;
+	}
+	
+	/**
 	 * Gets the average distance of the the left and right drive train encoders since last reset.
 	 * 
 	 * @return	a double containing the average distance (in inches? not really)
