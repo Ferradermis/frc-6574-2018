@@ -7,20 +7,14 @@
 
 package org.usfirst.frc.team6574.robot;
 
-import org.usfirst.frc.team6574.robot.commands.AutoDefault;
-import org.usfirst.frc.team6574.robot.commands.AutoScale;
-import org.usfirst.frc.team6574.robot.commands.AutoSwitch;
 import org.usfirst.frc.team6574.robot.subsystems.Conveyor;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
-import org.usfirst.frc.team6574.robot.subsystems.ExampleSubsystem;
 import org.usfirst.frc.team6574.robot.subsystems.Intake;
 import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
