@@ -77,6 +77,15 @@ public class RobotMap {
 		 * The PWM output number associated with the shooter's right Spark motor controller.
 		 */
 		public static final int RIGHT_PWM_NUM = 1;
+		
+		public static final int LEFT_PCN_ID = -1;
+		public static final int RIGHT_PCN_ID = -1;
+		
+		public static final int LOAD_PCN_ID = -1;
+		public static final int UNLOAD_PCN_ID = -1;
+		
+		public static final int RAISE_PCN_ID = -1;
+		public static final int LOWER_PCN_ID = -1;
 	}
 	
 	/**

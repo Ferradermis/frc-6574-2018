@@ -73,7 +73,7 @@ public class Controls {
 		/**
 		 * Joystick button number used to toggle deployment of the intake mechanism.
 		 */
-		public static final int TOGGLE_INTAKE = 4;
+		public static final int TOGGLE_INTAKE = 0;
 		
 		/**
 		 * Joystick button number used to spin the intake's arm rollers forward.
@@ -84,6 +84,12 @@ public class Controls {
 		 * Joystick button number used to spin the intake's arm rollers backward.
 		 */
 		public static final int ARM_BACKWARD = 6;
+		
+		public static final int TOGGLE_SHOOTER = 0;
+		public static final int RAISE_SHOOTER = 1;
+		public static final int LOWER_SHOOTER = 1;
+		public static final int DEPLOY_ARM = 0;
+		public static final int RETRACT_ARM = 0;
 		
 	}
 	

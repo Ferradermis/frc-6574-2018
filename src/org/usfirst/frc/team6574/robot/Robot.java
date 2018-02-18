@@ -242,15 +242,35 @@ public class Robot extends TimedRobot {
 				pressingShifter = false;
 			}
 			
-			if (Controls.USE_TOGGLE) {
-				if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_INTAKE)) {
-					if (!pressingIntake) {
-						intake.toggleDeploy();
-						pressingIntake = true;
+			if (m_oi.leftJoystick.getRawButton(Controls.joystick.RAISE_SHOOTER)) {
+				intake.deploy();
+				shooter.raise();
+			} else if (m_oi.rightJoystick.getRawButton(Controls.joystick.LOWER_SHOOTER)) {
+				shooter.lower();
+				intake.retract();
+			}
+			
+			if (!shooter.getRaised()) {
+				if (Controls.USE_TOGGLE) {
+					if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_INTAKE)) {
+						if (!pressingIntake) {
+							intake.toggleDeploy();
+							pressingIntake = true;
+						}
+					} else {
+						pressingIntake = false;
 					}
 				} else {
-					pressingIntake = false;
+					if (m_oi.leftJoystick.getRawButton(Controls.joystick.DEPLOY_ARM)) {
+						intake.deploy();
+					} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.RETRACT_ARM)) {
+						intake.retract();
+					}
 				}
+			}
+			
+			if (Controls.USE_TOGGLE) {
+				
 			} else {
 				if (m_oi.leftJoystick.getRawButton(Controls.joystick.ENGAGE_SHIFTER)) {
 					drive.engageShifter();
@@ -258,6 +278,7 @@ public class Robot extends TimedRobot {
 					drive.disengageShifter();
 				}
 			}
+			
 			
 			if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_FORWARD)) {
 				if (intakeSpin == 0 || intakeSpin == -Constants.INTAKE_SPEED) {
@@ -330,8 +351,6 @@ public class Robot extends TimedRobot {
 		} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
 			drive.frontLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
 			drive.backLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
-		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
-			drive.set(0.6);
 		} else {
 			drive.stopLeft();
 		}
@@ -341,8 +360,6 @@ public class Robot extends TimedRobot {
 		} else if (getRightY() < -Controls.joystick.DEAD_PERCENT) {
 			drive.frontRight(getRightY() + Controls.joystick.DEAD_PERCENT);
 			drive.backRight(getRightY() + Controls.joystick.DEAD_PERCENT);
-		} else if (usingJoystick && m_oi.leftJoystick.getTrigger() || !usingJoystick && m_oi.controller.getRawButton(10)) {
-			drive.set(0.4);
 		} else {
 			drive.stopRight();
 		}
