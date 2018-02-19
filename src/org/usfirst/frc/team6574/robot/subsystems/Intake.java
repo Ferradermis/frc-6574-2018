@@ -33,21 +33,21 @@ public class Intake extends Subsystem {
 	 * Extends the robot's intake mechanism using a pneumatic piston.
 	 */
 	public void deploy() {
-		deploy.set(Value.kForward);
+		deploy.set(Value.kReverse);
 	}
 	
 	/**
 	 * Retracts the robot's intake mechanism using a pneumatic piston.
 	 */
 	public void retract() {
-		deploy.set(Value.kReverse);
+		deploy.set(Value.kForward);
 	}
 	
 	/**
 	 * Alternates deployed and retracted status of the robot's intake mechanism.
 	 */
 	public void toggleDeploy() {
-		if (deploy.get() == Value.kForward) {
+		if (deploy.get() == Value.kReverse) {
 			retract();
 		} else {
 			deploy();
@@ -65,6 +65,14 @@ public class Intake extends Subsystem {
 	}
 	
 	/**
+	 * Stops all of the intake's motors.
+	 */
+	public void stop() {
+		leftArm.stopMotor();
+		rightArm.stopMotor();
+	}
+	
+	/**
 	 * Returns the speed of the intake's arm's rollers.
 	 * 
 	 * @return	a double containing the percent output
@@ -73,4 +81,12 @@ public class Intake extends Subsystem {
 		return leftArm.get();
 	}
 	
+	/**
+	 * Gets the deployed status of the intake.
+	 * 
+	 * @return	a boolean containing the state, with true deployed and false retracted
+	 */
+	public boolean getDeployed() {
+		return deploy.get() == Value.kForward;
+	}
 }

@@ -23,7 +23,7 @@ public class Controls {
 		/**
 		 * The deadzone amount used for joysticks, expressed as a percent from 0 to 1.
 		 */
-		public static final double DEAD_PERCENT = 0.3;
+		public static final double DEAD_PERCENT = 0.25;
 		
 		/**
 		 * Joystick button used to the spin the shooter at a slow speed in reverse.
@@ -56,40 +56,59 @@ public class Controls {
 		public static final int CLEAR_ENCODERS = 12;
 		
 		/**
-		 * Joystick button number used to engage the drive train's shifting mechanism.
+		 * Joystick button number used to engage the drive train's shifting mechanism (used only when not in toggle control mode).
 		 */
-		public static final int ENGAGE_SHIFTER = 3;
+		public static final int ENGAGE_SHIFTER = -1;
 		
 		/**
-		 * Joystick button number used to disengage the drive train's shifting mechanism.
+		 * Joystick button number used to disengage the drive train's shifting mechanism (used only when not in toggle control mode).
 		 */
-		public static final int DISENGAGE_SHIFTER = 4;
+		public static final int DISENGAGE_SHIFTER = -1;
 		 
 		/**
 		 * Joystick button number used to toggle the drive train's shifting mechanism.
 		 */
-		public static final int SHIFT = 3;
+		public static final int SHIFT = 5;
 		
 		/**
-		 * Joystick button number used to toggle deployment of the intake mechanism.
+		 * Joystick button number used to toggle deployment of the intake mechanism (used only when in toggle control mode).
 		 */
-		public static final int TOGGLE_INTAKE = 0;
+		public static final int TOGGLE_INTAKE = 6;
 		
 		/**
 		 * Joystick button number used to spin the intake's arm rollers forward.
 		 */
-		public static final int ARM_FORWARD = 5;
+		public static final int ARM_FORWARD = 3;
 		
 		/**
 		 * Joystick button number used to spin the intake's arm rollers backward.
 		 */
-		public static final int ARM_BACKWARD = 6;
+		public static final int ARM_BACKWARD = 4;
 		
-		public static final int TOGGLE_SHOOTER = 0;
-		public static final int RAISE_SHOOTER = 1;
-		public static final int LOWER_SHOOTER = 1;
-		public static final int DEPLOY_ARM = 0;
-		public static final int RETRACT_ARM = 0;
+		/**
+		 * Joystick button number used to toggle lifted state of the shooter mechanism (used only not in toggle control mode).
+		 */
+		public static final int TOGGLE_SHOOTER = 1;
+		
+		/**
+		 * Joystick button number used to raise the shooter mechanism (used only when not in toggle control mode).
+		 */
+		public static final int RAISE_SHOOTER = -1;
+		
+		/**
+		 * Joystick button number used to lower the shooter mechanism (used only when not in toggle control mode).
+		 */
+		public static final int LOWER_SHOOTER = -1;
+		
+		/**
+		 * Joystick button number used to deploy the intake's arms (used only when not in toggle control mode).
+		 */
+		public static final int DEPLOY_ARM = -1;
+		
+		/**
+		 * Joystick button number used to retract the intake's arms (used only when not in toggle control mode).
+		 */
+		public static final int RETRACT_ARM = -1;
 		
 	}
 	

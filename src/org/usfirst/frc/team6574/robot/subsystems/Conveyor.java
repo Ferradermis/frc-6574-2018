@@ -32,5 +32,13 @@ public class Conveyor extends Subsystem {
 		leftRoller.set(speed);
 		rightRoller.set(-speed);
 	}
+
+	/**
+	 * Stops all of the intake's motors.
+	 */
+	public void stop() {
+		leftRoller.stopMotor();
+		rightRoller.stopMotor();
+	}
 	
 }
