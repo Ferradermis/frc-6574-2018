@@ -10,10 +10,10 @@ package org.usfirst.frc.team6574.robot;
 import org.usfirst.frc.team6574.robot.subsystems.Conveyor;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.Intake;
-import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -48,22 +48,31 @@ public class Robot extends TimedRobot {
 	boolean pressingIntake = false;
 	boolean pressingShooter = false;
 	boolean pressingSpin = false;
+	boolean pressingJoystick = false;
+	
+	boolean oneJoystick = false;
 	
 	double intakeSpin = 0.0;
 	
+	double distanceMoved = 0;
+
+	int autoStage = 0;
+	Timer t = new Timer();
+	
+	
 	double getLeftY() {
 		if (usingJoystick)
-			return m_oi.leftJoystick.getY();
+			return -m_oi.leftJoystick.getY();
 		if (!usingJoystick)
-			return m_oi.controller.getRawAxis(1);
+			return -m_oi.controller.getRawAxis(1);
 		return 0;
 	}
 	
 	double getRightY() {
 		if (usingJoystick)
-			return m_oi.rightJoystick.getY();
+			return -m_oi.rightJoystick.getY();
 		if (!usingJoystick)
-			return m_oi.controller.getRawAxis(3);	
+			return -m_oi.controller.getRawAxis(3);	
 		return 0;
 	}
 	
@@ -90,6 +99,10 @@ public class Robot extends TimedRobot {
 		leftOppositeSwitch = false;
 		
 	}
+	
+	//public double mapNumber(double num, double min1, double max1, double min2, double max2) {
+	//	return (num - min1) * (max2 - min2) / (max1 - min1) + min2;
+	//}
 
 	/** 
 	 * This function is called once each time the robot enters Disabled mode.
@@ -98,7 +111,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		
+		autoStage = 0;
+		distanceMoved = 0;
+		//drive.calibrateGyro();
+		drive.clearEncoders();
 	}
 
 	@Override
@@ -106,8 +122,6 @@ public class Robot extends TimedRobot {
 		//Scheduler.getInstance().run();
 	}
 	
-	double distanceMoved = 0;
-
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -125,12 +139,13 @@ public class Robot extends TimedRobot {
 		
 		// GET FMS POSITION
 		
-		distanceMoved = 0;
+		//t.reset();
+		//t.start();
 		
-		String positions = DriverStation.getInstance().getGameSpecificMessage();
-		leftOwnSwitch = positions.charAt(0) == 'L' ? true : false;
-		leftScale = positions.charAt(1) == 'L' ? true : false;
-		leftOppositeSwitch = positions.charAt(2) == 'L' ? true : false;
+		//String positions = DriverStation.getInstance().getGameSpecificMessage();
+		//leftOwnSwitch = positions.charAt(0) == 'L' ? true : false;
+		//leftScale = positions.charAt(1) == 'L' ? true : false;
+		//leftOppositeSwitch = positions.charAt(2) == 'L' ? true : false;
 		
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -145,9 +160,20 @@ public class Robot extends TimedRobot {
 		//}
 		
 		drive.clearEncoders();
+
+		distanceMoved = 0;
+		//drive.calibrateGyro();
+		drive.resetGyro();
 		
+		//if (!drive.isShifted()) {
+		//	drive.engageShifter();
+		//}
+		
+		autoStage = 0;
+		
+		oneJoystick = false;
 	}
-	
+
 	/**
 	 * This function is called periodically during autonomous.
 	 */
@@ -163,13 +189,65 @@ public class Robot extends TimedRobot {
 		
 		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
 		
-		if (distanceMoved < 120.0 * (9.96/13.0)) {
-			distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
-			SmartDashboard.putNumber("Encoder dist", distanceMoved);
-			drive.set(0.6);
+		/*if (t.get() < 3) {
+			drive.set(-0.4);
 		} else {
-			drive.set(0);
+			drive.stop();
+		}*/
+		
+		//(120.0 * (9.96/13.0)) * 12/10 = 12 feet 5 inches
+		//when distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34
+		
+		
+		// WORKING RIGHT SWITCH AUTO
+		
+		if (autoStage == 0) {
+			if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
+				distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+				SmartDashboard.putNumber("Encoder dist", distanceMoved);
+				drive.set(0.5);
+			} else {
+				drive.stop();
+				drive.resetGyro();
+				drive.clearEncoders();
+				autoStage = 1;
+			}
+		} else if (autoStage == 1){
+			if (drive.getGyroAngle() < 80) {
+				drive.rotate(0.4);
+			} else {
+				drive.stop();
+				drive.resetGyro();
+				autoStage = 2;
+				t.reset();
+			}
+		} else if (autoStage == 2) {
+			if (t.get() < 2) {
+				drive.set(-0.4);
+			} else {
+				drive.stop();
+			}
+		} else if (autoStage == 3) {
+			drive.stop();
+			drive.clearEncoders();
 		}
+		
+		/*
+		 * RIGHT SWITCH MID AUTO
+		 */
+		/*if (autoStage == 0) {
+			if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10 * 1/2) {
+				distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+				SmartDashboard.putNumber("Encoder dist", distanceMoved);
+				drive.set(0.5);
+			} else {
+				drive.stop();
+				drive.resetGyro();
+				autoStage = 1;
+			}
+		} else if (autoStage == 1) {
+			
+		}*/
 		
 		/*if (drive.getEncoderDist() < Constants.dist.AUTO_TEST) {
 			drive.set(Constants.AUTO_SPEED);
@@ -196,7 +274,7 @@ public class Robot extends TimedRobot {
 		pressingSpin = false;
 		intakeSpin = 0.0;
 		
-		drive.set(0);
+		//drive.set(0);
 		
 		//controlSelected = SmartDashboard.getString("Controls", "Joystick");
 		//usingJoystick = (Boolean)control_chooser.getSelected();
@@ -303,13 +381,22 @@ public class Robot extends TimedRobot {
 				}
 			}
 			
+			if (m_oi.leftJoystick.getTrigger()) {
+				if (!pressingJoystick) {
+					oneJoystick = !oneJoystick;
+					pressingJoystick = true;
+				}
+			} else {
+				pressingJoystick = false;
+			}
+			
 			//if (intake.getDeployed()) {
 				if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_FORWARD)) {
 					intake.spin(0.5);
-					conveyor.spin(0.5);
+					conveyor.spin(1);
 				} else if (m_oi.leftJoystick.getRawButton(Controls.joystick.ARM_BACKWARD)) {
 					intake.spin(-0.5);
-					conveyor.spin(-0.5);
+					conveyor.spin(-1);
 				} else {
 					intake.stop();
 					conveyor.stop();
@@ -391,23 +478,63 @@ public class Robot extends TimedRobot {
 		//
 		// Tank Drive
 		//
-		if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
-			drive.frontLeft(getLeftY() - Controls.joystick.DEAD_PERCENT);
-			drive.backLeft(getLeftY() - Controls.joystick.DEAD_PERCENT);
-		} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
-			drive.frontLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
-			drive.backLeft(getLeftY() + Controls.joystick.DEAD_PERCENT);
+		if (oneJoystick) {
+			if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
+				drive.set(getLeftY() + Controls.joystick.DEAD_PERCENT);
+			} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
+				drive.set(getLeftY() + Controls.joystick.DEAD_PERCENT);
+			} else if (m_oi.leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
+				drive.rotate(m_oi.leftJoystick.getTwist() - Controls.joystick.DEAD_PERCENT);
+			} else if (m_oi.leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
+				drive.rotate(m_oi.leftJoystick.getTwist() + Controls.joystick.DEAD_PERCENT);
+			} else {
+				drive.stop();
+			}
 		} else {
-			drive.stopLeft();
-		}
-		if (getRightY() > Controls.joystick.DEAD_PERCENT) {
-			drive.frontRight(getRightY() - Controls.joystick.DEAD_PERCENT);
-			drive.backRight(getRightY() - Controls.joystick.DEAD_PERCENT);
-		} else if (getRightY() < -Controls.joystick.DEAD_PERCENT) {
-			drive.frontRight(getRightY() + Controls.joystick.DEAD_PERCENT);
-			drive.backRight(getRightY() + Controls.joystick.DEAD_PERCENT);
-		} else {
-			drive.stopRight();
+			double driveValue = 0;
+			if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
+				driveValue = getLeftY() - Controls.joystick.DEAD_PERCENT;
+				if (m_oi.leftJoystick.getRawButton(2) || m_oi.rightJoystick.getRawButton(2)) {
+					driveValue = 1;
+				}
+				drive.frontLeft(driveValue);
+				//drive.frontLeft(mapNumber(getLeftY() - Controls.joystick.DEAD_PERCENT, Controls.joystick.DEAD_PERCENT, 1.0 - Controls.joystick.DEAD_PERCENT, 0.0, 1.0));
+				drive.backLeft(driveValue);
+				//drive.backLeft(mapNumber(getLeftY() - Controls.joystick.DEAD_PERCENT, Controls.joystick.DEAD_PERCENT, 1.0 - Controls.joystick.DEAD_PERCENT, 0.0, 1.0));
+			} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
+				driveValue = getLeftY() + Controls.joystick.DEAD_PERCENT;
+				if (m_oi.leftJoystick.getRawButton(2) || m_oi.rightJoystick.getRawButton(2)) {
+					driveValue = -1;
+				}
+				drive.frontLeft(driveValue);
+				//drive.frontLeft(mapNumber(getLeftY() + Controls.joystick.DEAD_PERCENT, -Controls.joystick.DEAD_PERCENT, -1.0 + Controls.joystick.DEAD_PERCENT, 0.0, -1.0));
+				drive.backLeft(driveValue);
+				//drive.backLeft(mapNumber(getLeftY() + Controls.joystick.DEAD_PERCENT, -Controls.joystick.DEAD_PERCENT, -1.0 + Controls.joystick.DEAD_PERCENT, 0.0, -1.0));
+			} else {
+				drive.stopLeft();
+			}
+			driveValue = 0;
+			if (getRightY() > Controls.joystick.DEAD_PERCENT) {
+				driveValue = getRightY() - Controls.joystick.DEAD_PERCENT;
+				if (m_oi.leftJoystick.getRawButton(2) || m_oi.rightJoystick.getRawButton(2)) {
+					driveValue = 1;
+				}
+				drive.frontRight(driveValue);
+				//drive.frontRight(mapNumber(getRightY() - Controls.joystick.DEAD_PERCENT, Controls.joystick.DEAD_PERCENT, 1.0 - Controls.joystick.DEAD_PERCENT, 0.0, 1.0));
+				drive.backRight(driveValue);
+				//drive.backRight(mapNumber(getRightY() - Controls.joystick.DEAD_PERCENT, Controls.joystick.DEAD_PERCENT, 1.0 - Controls.joystick.DEAD_PERCENT, 0.0, 1.0));
+			} else if (getRightY() < -Controls.joystick.DEAD_PERCENT) {
+				driveValue = getRightY() + Controls.joystick.DEAD_PERCENT;
+				if (m_oi.leftJoystick.getRawButton(2) || m_oi.rightJoystick.getRawButton(2)) {
+					driveValue = -1;
+				}
+				drive.frontRight(driveValue);
+				//drive.frontRight(mapNumber(getRightY() + Controls.joystick.DEAD_PERCENT, -Controls.joystick.DEAD_PERCENT, -1.0 + Controls.joystick.DEAD_PERCENT, 0.0, -1.0));
+				drive.backRight(driveValue);
+				//drive.backRight(mapNumber(getRightY() + Controls.joystick.DEAD_PERCENT, -Controls.joystick.DEAD_PERCENT, -1.0 + Controls.joystick.DEAD_PERCENT, 0.0, -1.0));
+			} else {
+				drive.stopRight();
+			}
 		}
 	}
 

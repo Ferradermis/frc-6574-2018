@@ -66,6 +66,8 @@ public class DriveTrain extends PIDSubsystem {
 		gyro.reset();
 		
 		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCN_ID, RobotMap.driveTrain.SHIFT_ON_PCN_ID);
+		
+		engageShifter();
 
 		//getPIDController().onTarget();
 	}
@@ -91,7 +93,7 @@ public class DriveTrain extends PIDSubsystem {
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
 	public void frontLeft(double speed) {
-		frontLeft.set(ControlMode.PercentOutput, speed);
+		frontLeft.set(ControlMode.PercentOutput, -speed);
 		//MASTER
 	}
 	
@@ -101,7 +103,7 @@ public class DriveTrain extends PIDSubsystem {
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
 	public void frontRight(double speed) {
-		frontRight.set(ControlMode.PercentOutput, -speed);
+		frontRight.set(ControlMode.PercentOutput, speed);
 		//MASTER
 	}
 	
@@ -111,7 +113,7 @@ public class DriveTrain extends PIDSubsystem {
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
 	public void backLeft(double speed) {
-		backLeft.set(ControlMode.PercentOutput, speed);
+		backLeft.set(ControlMode.PercentOutput, -speed);
 		//FOLLOWER MODE/SLAVE
 	}
 	
@@ -121,7 +123,7 @@ public class DriveTrain extends PIDSubsystem {
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
 	public void backRight(double speed) {
-		backRight.set(ControlMode.PercentOutput, -speed);
+		backRight.set(ControlMode.PercentOutput, speed);
 		//backRight.set(ControlMode.Follower, speed);
 		//FOLLOWER MODE/SLAVE
 	}
@@ -273,6 +275,13 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void calibrateGyro() {
 		gyro.calibrate();
+	}
+
+	public void rotate(double d) {	
+		frontLeft(d);
+		backLeft(d);
+		frontRight(-d);
+		backRight(-d);
 	}
 	
 }

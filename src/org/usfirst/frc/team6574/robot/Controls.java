@@ -23,7 +23,7 @@ public class Controls {
 		/**
 		 * The deadzone amount used for joysticks, expressed as a percent from 0 to 1.
 		 */
-		public static final double DEAD_PERCENT = 0.25;
+		public static final double DEAD_PERCENT = 0.1;
 		
 		/**
 		 * Joystick button used to the spin the shooter at a slow speed in reverse.
