@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
  * 
  * @author Zach Brantmeier
  */
-public class DriveTrain extends PIDSubsystem {
+public class DriveTrain extends Subsystem {
 	
 	TalonSRX frontLeft;
 	TalonSRX frontRight;
@@ -34,33 +34,19 @@ public class DriveTrain extends PIDSubsystem {
 
 	/**
 	 * Constructs a drive train subsystem for the robot.
-	 * 
-	 * @param p	a double containing the proportional value for the PIDSubsystem superclass
-	 * @param i a double containing the integral value for the PIDSubsystem superclass
-	 * @param d a double containing the derivative value for the PIDSubsystem superclass
 	 */
-	public DriveTrain(double p, double i, double d) {
-		super(p, i, d);
-		
+	public DriveTrain() {
 		frontLeft = new TalonSRX(RobotMap.driveTrain.FRONT_LEFT_CAN_ID);
 		frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
 		backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
 		backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
-		//backLeft.follow(frontLeft);
-		//backRight.follow(frontRight);
 		
-		frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		
-		//setInputRange(0, 0);
-		setOutputRange(-1, 1);
-		setPercentTolerance(1);
-		
+		//frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+		//frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
 		compressor = new Compressor();
 		compressor.start();
 		compressor.setClosedLoopControl(true);
-		
-		getPIDController().setContinuous(false);
 		
 		gyro = new ADXRS450_Gyro();
 		gyro.reset();
@@ -68,18 +54,6 @@ public class DriveTrain extends PIDSubsystem {
 		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCN_ID, RobotMap.driveTrain.SHIFT_ON_PCN_ID);
 		
 		engageShifter();
-
-		//getPIDController().onTarget();
-	}
-
-	@Override
-	protected double returnPIDInput() {
-		return frontLeft.getSensorCollection().getQuadraturePosition();
-	}
-
-	@Override
-	protected void usePIDOutput(double output) {
-		//DRIVE TRAIN DRIVE OUTPUT
 	}
 
 	@Override
@@ -94,7 +68,6 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void frontLeft(double speed) {
 		frontLeft.set(ControlMode.PercentOutput, -speed);
-		//MASTER
 	}
 	
 	/**
@@ -104,7 +77,6 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void frontRight(double speed) {
 		frontRight.set(ControlMode.PercentOutput, speed);
-		//MASTER
 	}
 	
 	/**
@@ -114,7 +86,6 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void backLeft(double speed) {
 		backLeft.set(ControlMode.PercentOutput, -speed);
-		//FOLLOWER MODE/SLAVE
 	}
 	
 	/**
@@ -124,8 +95,6 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public void backRight(double speed) {
 		backRight.set(ControlMode.PercentOutput, speed);
-		//backRight.set(ControlMode.Follower, speed);
-		//FOLLOWER MODE/SLAVE
 	}
 	
 	/**
@@ -207,7 +176,6 @@ public class DriveTrain extends PIDSubsystem {
 	 */
 	public double getEncoderDist() {
 		return (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition()) / 2;
-		/*((6 * Math.PI / 256) * (frontLeft.getSensorCollection().getQuadraturePosition() + frontRight.getSensorCollection().getQuadraturePosition())) / 2;*/
 	}
 	
 	/**
