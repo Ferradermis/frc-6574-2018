@@ -34,9 +34,9 @@ public class Robot extends TimedRobot {
 	
 	public static OI m_oi;
 	
-	boolean leftOwnSwitch;
-	boolean leftScale;
-	boolean leftOppositeSwitch;
+	//boolean leftOwnSwitch;
+	//boolean leftScale;
+	//boolean leftOppositeSwitch;
 	
 	//Command m_autonomousCommand;
 	//SendableChooser<Command> m_chooser = new SendableChooser<Command>();
@@ -53,11 +53,11 @@ public class Robot extends TimedRobot {
 	boolean oneJoystick = false;
 	
 	double intakeSpin = 0.0;
-	
 	double distanceMoved = 0;
-
 	int autoStage = 0;
 	Timer t = new Timer();
+	int pos = 0;
+	boolean switchOwnership = false;
 	
 	
 	double getLeftY() {
@@ -94,9 +94,9 @@ public class Robot extends TimedRobot {
 		
 		drive.calibrateGyro();
 		
-		leftOwnSwitch = false;
-		leftScale = false;
-		leftOppositeSwitch = false;
+		//leftOwnSwitch = false;
+		//leftScale = false;
+		//leftOppositeSwitch = false;
 		
 	}
 	
@@ -142,7 +142,10 @@ public class Robot extends TimedRobot {
 		//t.reset();
 		//t.start();
 		
-		//String positions = DriverStation.getInstance().getGameSpecificMessage();
+		pos = DriverStation.getInstance().getLocation();
+		
+		String positions = DriverStation.getInstance().getGameSpecificMessage();
+		switchOwnership = (positions.charAt(0) == 'L' && pos == 1) || (positions.charAt(0) == 'L' && pos == 3);
 		//leftOwnSwitch = positions.charAt(0) == 'L' ? true : false;
 		//leftScale = positions.charAt(1) == 'L' ? true : false;
 		//leftOppositeSwitch = positions.charAt(2) == 'L' ? true : false;
@@ -181,13 +184,13 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		//Scheduler.getInstance().run();
 		
-		SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
-		SmartDashboard.putNumber("Left encoder distance", drive.getLeftDistance());
-		SmartDashboard.putNumber("Right encoder distance", drive.getRightDistance());
-		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
-		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
+		//SmartDashboard.putNumber("Encoder distance", drive.getEncoderDist());
+		//SmartDashboard.putNumber("Left encoder distance", drive.getLeftDistance());
+		//SmartDashboard.putNumber("Right encoder distance", drive.getRightDistance());
+		//SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
+		//SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
 		
-		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
+		//SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
 		
 		/*if (t.get() < 3) {
 			drive.set(-0.4);
@@ -199,38 +202,86 @@ public class Robot extends TimedRobot {
 		//when distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34
 		
 		
-		// WORKING RIGHT SWITCH AUTO
-		
-		if (autoStage == 0) {
-			if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
-				distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
-				SmartDashboard.putNumber("Encoder dist", distanceMoved);
-				drive.set(0.5);
-			} else {
-				drive.stop();
-				drive.resetGyro();
-				drive.clearEncoders();
-				autoStage = 1;
+		if (!switchOwnership) {
+			if (autoStage == 0) {
+				if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
+					distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+					SmartDashboard.putNumber("Encoder dist", distanceMoved);
+					drive.set(0.5);
+				} else {
+					drive.stop();
+					drive.resetGyro();
+					drive.clearEncoders();
+					autoStage = 1;
+				}
 			}
-		} else if (autoStage == 1){
-			if (drive.getGyroAngle() < 80) {
-				drive.rotate(0.4);
-			} else {
-				drive.stop();
-				drive.resetGyro();
-				autoStage = 2;
-				t.reset();
+		} else {
+			if (pos == 1) {
+				if (autoStage == 0) {
+					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
+						distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+						SmartDashboard.putNumber("Encoder dist", distanceMoved);
+						drive.set(0.5);
+					} else {
+						drive.stop();
+						drive.resetGyro();
+						drive.clearEncoders();
+						autoStage = 1;
+					}
+				} else if (autoStage == 1){
+					if (drive.getGyroAngle() > -90) {
+						drive.rotate(-0.3);
+					} else {
+						drive.stop();
+						drive.resetGyro();
+						autoStage = 2;
+						t.reset();
+					}
+				} else if (autoStage == 2) {
+					if (t.get() < 2) {
+						drive.set(-0.4);
+					} else {
+						drive.stop();
+					}
+				} else if (autoStage == 3) {
+					drive.stop();
+					drive.clearEncoders();
+				}
+			} else if (pos == 3) {
+				if (autoStage == 0) {
+					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
+						distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
+						SmartDashboard.putNumber("Encoder dist", distanceMoved);
+						drive.set(0.5);
+					} else {
+						drive.stop();
+						drive.resetGyro();
+						drive.clearEncoders();
+						autoStage = 1;
+					}
+				} else if (autoStage == 1){
+					if (drive.getGyroAngle() < 90) {
+						drive.rotate(0.3);
+					} else {
+						drive.stop();
+						drive.resetGyro();
+						autoStage = 2;
+						t.reset();
+					}
+				} else if (autoStage == 2) {
+					if (t.get() < 2) {
+						drive.set(-0.4);
+					} else {
+						drive.stop();
+					}
+				} else if (autoStage == 3) {
+					drive.stop();
+					drive.clearEncoders();
+				}
 			}
-		} else if (autoStage == 2) {
-			if (t.get() < 2) {
-				drive.set(-0.4);
-			} else {
-				drive.stop();
-			}
-		} else if (autoStage == 3) {
-			drive.stop();
-			drive.clearEncoders();
 		}
+		
+		// WORKING RIGHT SWITCH AUTO
 		
 		/*
 		 * RIGHT SWITCH MID AUTO
