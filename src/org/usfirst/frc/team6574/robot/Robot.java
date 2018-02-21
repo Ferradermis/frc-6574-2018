@@ -53,7 +53,6 @@ public class Robot extends TimedRobot {
 	int pos = 0;
 	boolean switchOwnership = false;
 	
-	
 	double getLeftY() {
 		return -leftJoystick.getY();
 	}
@@ -121,11 +120,14 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if (!switchOwnership) {
+			//
+			// Auto line (if on wrong switch side or center)
+			// 
 			if (autoStage == 0) {
 				if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
 					distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
 					SmartDashboard.putNumber("Encoder dist", distanceMoved);
-					drive.set(0.5);
+					drive.set(Constants.AUTO_DRIVE_SPEED);
 				} else {
 					drive.stop();
 					drive.resetGyro();
@@ -134,6 +136,9 @@ public class Robot extends TimedRobot {
 				}
 			}
 		} else {
+			// 
+			// Left wall owned switch
+			//
 			if (pos == 1) {
 				if (autoStage == 0) {
 					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
@@ -146,7 +151,7 @@ public class Robot extends TimedRobot {
 						drive.clearEncoders();
 						autoStage = 1;
 					}
-				} else if (autoStage == 1){
+				} else if (autoStage == 1) {
 					if (drive.getGyroAngle() > -90) {
 						drive.rotate(-Constants.AUTO_ROTATE_SPEED);
 					} else {
@@ -162,9 +167,14 @@ public class Robot extends TimedRobot {
 						drive.stop();
 					}
 				} else if (autoStage == 3) {
+					t.stop();
+					t.reset();
 					drive.stop();
 					drive.clearEncoders();
 				}
+			// 
+			// Right wall owned switch
+			//
 			} else if (pos == 3) {
 				if (autoStage == 0) {
 					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
@@ -177,7 +187,7 @@ public class Robot extends TimedRobot {
 						drive.clearEncoders();
 						autoStage = 1;
 					}
-				} else if (autoStage == 1){
+				} else if (autoStage == 1) {
 					if (drive.getGyroAngle() < 90) {
 						drive.rotate(Constants.AUTO_ROTATE_SPEED);
 					} else {
@@ -193,6 +203,8 @@ public class Robot extends TimedRobot {
 						drive.stop();
 					}
 				} else if (autoStage == 3) {
+					t.stop();
+					t.reset();
 					drive.stop();
 					drive.clearEncoders();
 				}
@@ -204,10 +216,13 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		distanceMoved = 0;
 		drive.clearEncoders();
+		drive.resetGyro();
 		pressingShifter = false;
 		pressingIntake = false;
 		pressingShooter = false;
 		pressingSpin = false;
+		pressingJoystick = false;
+		pressingShooterSpin = false;
 		oneJoystick = false;
 		
 		t.reset();
@@ -224,7 +239,6 @@ public class Robot extends TimedRobot {
 		// Movement controls
 		//
 		if (oneJoystick) {
-			double driveAmount = 0;
 			if (leftJoystick.getRawButton(Controls.joystick.TURBO)) {
 				if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
 					drive.set(1);
@@ -234,13 +248,14 @@ public class Robot extends TimedRobot {
 					drive.set(0);
 				}
 			} else {
+				double driveAmount = 0;
 				if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
 					driveAmount = getLeftY() - Controls.joystick.DEAD_PERCENT;
 					if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
 						drive.left(driveAmount);
-						drive.right(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.right(driveAmount - (leftJoystick.getTwist() * driveAmount)/2);
 					} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
-						drive.left(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.left(driveAmount - (Math.abs(leftJoystick.getTwist()) * driveAmount)/2);
 						drive.right(driveAmount);
 					} else {
 						drive.set(driveAmount);
@@ -248,11 +263,11 @@ public class Robot extends TimedRobot {
 				} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
 					driveAmount = getLeftY() + Controls.joystick.DEAD_PERCENT;
 					if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
-						drive.left(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.left(driveAmount + (leftJoystick.getTwist() * driveAmount)/2);
 						drive.right(driveAmount);
 					} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
 						drive.left(driveAmount);
-						drive.right(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.right(driveAmount + (Math.abs(leftJoystick.getTwist()) * driveAmount)/2);
 					} else {
 						drive.set(driveAmount);
 					}
