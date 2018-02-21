@@ -10,6 +10,7 @@ package org.usfirst.frc.team6574.robot;
 import org.usfirst.frc.team6574.robot.subsystems.Conveyor;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.Intake;
+import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -30,7 +31,7 @@ public class Robot extends TimedRobot {
 	public static final DriveTrain drive = new DriveTrain();
 	public static final Intake intake = new Intake();
 	public static final Conveyor conveyor = new Conveyor();
-	//public static final Shooter shooter = new Shooter();
+	public static final Shooter shooter = new Shooter();
 	
 	public Joystick leftJoystick = new Joystick(RobotMap.input.LEFT_JOYSTICK_USB_NUM);
 	public Joystick rightJoystick = new Joystick(RobotMap.input.RIGHT_JOYSTICK_USB_NUM);
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
 	boolean pressingShooter = false;
 	boolean pressingSpin = false;
 	boolean pressingJoystick = false;
+	boolean pressingShooterSpin = false;
 	
 	boolean oneJoystick = false;
 	
@@ -108,6 +110,9 @@ public class Robot extends TimedRobot {
 		distanceMoved = 0;
 		drive.resetGyro();
 		autoStage = 0;
+		
+		//shooter.unload();
+		//shooter.lower();
 	}
 
 	/**
@@ -134,7 +139,7 @@ public class Robot extends TimedRobot {
 					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
 						distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
 						SmartDashboard.putNumber("Encoder dist", distanceMoved);
-						drive.set(0.5);
+						drive.set(Constants.AUTO_DRIVE_SPEED);
 					} else {
 						drive.stop();
 						drive.resetGyro();
@@ -143,7 +148,7 @@ public class Robot extends TimedRobot {
 					}
 				} else if (autoStage == 1){
 					if (drive.getGyroAngle() > -90) {
-						drive.rotate(-0.3);
+						drive.rotate(-Constants.AUTO_ROTATE_SPEED);
 					} else {
 						drive.stop();
 						drive.resetGyro();
@@ -152,7 +157,7 @@ public class Robot extends TimedRobot {
 					}
 				} else if (autoStage == 2) {
 					if (t.get() < 2) {
-						drive.set(-0.4);
+						drive.set(-Constants.AUTO_DRIVE_SPEED);
 					} else {
 						drive.stop();
 					}
@@ -165,7 +170,7 @@ public class Robot extends TimedRobot {
 					if (distanceMoved < (120.0 * (9.96/13.0)) * 12/10) {
 						distanceMoved = 0.0736 * Math.abs(drive.getEncoderDist()) / 34;
 						SmartDashboard.putNumber("Encoder dist", distanceMoved);
-						drive.set(0.5);
+						drive.set(Constants.AUTO_DRIVE_SPEED);
 					} else {
 						drive.stop();
 						drive.resetGyro();
@@ -174,7 +179,7 @@ public class Robot extends TimedRobot {
 					}
 				} else if (autoStage == 1){
 					if (drive.getGyroAngle() < 90) {
-						drive.rotate(0.3);
+						drive.rotate(Constants.AUTO_ROTATE_SPEED);
 					} else {
 						drive.stop();
 						drive.resetGyro();
@@ -183,7 +188,7 @@ public class Robot extends TimedRobot {
 					}
 				} else if (autoStage == 2) {
 					if (t.get() < 2) {
-						drive.set(-0.4);
+						drive.set(-Constants.AUTO_DRIVE_SPEED);
 					} else {
 						drive.stop();
 					}
@@ -204,6 +209,9 @@ public class Robot extends TimedRobot {
 		pressingShooter = false;
 		pressingSpin = false;
 		oneJoystick = false;
+		
+		t.reset();
+		t.start();
 	}
    
 	/**
@@ -216,16 +224,45 @@ public class Robot extends TimedRobot {
 		// Movement controls
 		//
 		if (oneJoystick) {
-			if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
-				drive.set(getLeftY() + Controls.joystick.DEAD_PERCENT);
-			} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
-				drive.set(getLeftY() + Controls.joystick.DEAD_PERCENT);
-			} else if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
-				drive.rotate(leftJoystick.getTwist() - Controls.joystick.DEAD_PERCENT);
-			} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
-				drive.rotate(leftJoystick.getTwist() + Controls.joystick.DEAD_PERCENT);
+			double driveAmount = 0;
+			if (leftJoystick.getRawButton(Controls.joystick.TURBO)) {
+				if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
+					drive.set(1);
+				} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
+					drive.set(-1);
+				} else {
+					drive.set(0);
+				}
 			} else {
-				drive.stop();
+				if (getLeftY() > Controls.joystick.DEAD_PERCENT) {
+					driveAmount = getLeftY() - Controls.joystick.DEAD_PERCENT;
+					if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
+						drive.left(driveAmount);
+						drive.right(driveAmount - (leftJoystick.getTwist() * driveAmount));
+					} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
+						drive.left(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.right(driveAmount);
+					} else {
+						drive.set(driveAmount);
+					}
+				} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
+					driveAmount = getLeftY() + Controls.joystick.DEAD_PERCENT;
+					if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
+						drive.left(driveAmount - (leftJoystick.getTwist() * driveAmount));
+						drive.right(driveAmount);
+					} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
+						drive.left(driveAmount);
+						drive.right(driveAmount - (leftJoystick.getTwist() * driveAmount));
+					} else {
+						drive.set(driveAmount);
+					}
+				} else if (leftJoystick.getTwist() > Controls.joystick.DEAD_PERCENT) {
+					drive.rotate(leftJoystick.getTwist() - Controls.joystick.DEAD_PERCENT);
+				} else if (leftJoystick.getTwist() < -Controls.joystick.DEAD_PERCENT) {
+					drive.rotate(leftJoystick.getTwist() + Controls.joystick.DEAD_PERCENT);
+				} else {
+					drive.stop();
+				}
 			}
 		} else {
 			double driveValue = 0;
@@ -234,15 +271,13 @@ public class Robot extends TimedRobot {
 				if (leftJoystick.getRawButton(Controls.joystick.TURBO) || rightJoystick.getRawButton(Controls.joystick.TURBO)) {
 					driveValue = 1;
 				}
-				drive.frontLeft(driveValue);
-				drive.backLeft(driveValue);	
+				drive.left(driveValue);
 			} else if (getLeftY() < -Controls.joystick.DEAD_PERCENT) {
 				driveValue = getLeftY() + Controls.joystick.DEAD_PERCENT;
 				if (leftJoystick.getRawButton(Controls.joystick.TURBO) || rightJoystick.getRawButton(Controls.joystick.TURBO)) {
 					driveValue = -1;
 				}
-				drive.frontLeft(driveValue);
-				drive.backLeft(driveValue);
+				drive.left(driveValue);
 			} else {
 				drive.stopLeft();
 			}
@@ -252,53 +287,77 @@ public class Robot extends TimedRobot {
 				if (leftJoystick.getRawButton(Controls.joystick.TURBO) || rightJoystick.getRawButton(Controls.joystick.TURBO)) {
 					driveValue = 1;
 				}
-				drive.frontRight(driveValue);
-				drive.backRight(driveValue);
+				drive.right(driveValue);
 			} else if (getRightY() < -Controls.joystick.DEAD_PERCENT) {
 				driveValue = getRightY() + Controls.joystick.DEAD_PERCENT;
 				if (leftJoystick.getRawButton(Controls.joystick.TURBO) || rightJoystick.getRawButton(Controls.joystick.TURBO)) {
 					driveValue = -1;
 				}
-				drive.frontRight(driveValue);
-				drive.backRight(driveValue);
+				drive.right(driveValue);
 			} else {
 				drive.stopRight();
 			}
 		}
 		
-		
-		/*
-			 * 
-			 * SHOOTER
-		if (m_oi.leftJoystick.getRawButton(Controls.joystick.TOGGLE_SHOOTER)) {
-				if (!pressingShooter) {
-					if (shooter.getRaised()) {
-						shooter.lower();
-						intake.retract();
-					} else {
-						intake.deploy();
-						shooter.raise();
-					}
-					pressingShooter = true;
+		//
+		// Shooter toggle
+		//
+		if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_DEPLOY)) {
+			if (!pressingShooter) {
+				if (shooter.getRaised()) {
+					shooter.lower();
+					intake.retract();
+				} else {
+					intake.deploy();
+					shooter.raise();
 				}
-			} else {
-				pressingShooter = false;
+				pressingShooter = true;
 			}
-			 */
-			
+		} else {
+			pressingShooter = false;
+		}
+		
+		//
+		// Shooter spin toggle
+		//
+		if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_SPIN)) {
+			if (!pressingShooterSpin) {
+				shooter.spin(Constants.SHOOTER_SPEED);
+				pressingShooterSpin = true;
+			} else {
+				shooter.stop();
+			}
+		} else {
+			pressingShooterSpin = false;
+		}
+		
+		//
+		// Shoot
+		//
+		if (controller.getRawButton(Controls.controller.SHOOT) && !(t.get() < Constants.UNLOAD_TIME)) {
+			shooter.load();
+			t.reset();
+			t.start();
+		}
+		if (shooter.getLoaded() && t.get() > Constants.UNLOAD_TIME) {
+			shooter.unload();
+			t.reset();
+			t.stop();
+		}
+		
 		//
 		// Intake deploy toggle
 		//
-		//if (!shooter.getRaised()) {
-		if (controller.getRawButton(Controls.controller.TOGGLE_INTAKE)) {
-			if (!pressingIntake) {
-				intake.toggleDeploy();
-				pressingIntake = true;
+		if (!shooter.getRaised()) {
+			if (controller.getRawButton(Controls.controller.TOGGLE_INTAKE)) {
+				if (!pressingIntake) {
+					intake.toggleDeploy();
+					pressingIntake = true;
+				}
+			} else {
+				pressingIntake = false;
 			}
-		} else {
-			pressingIntake = false;
 		}
-		//}
 		
 		//
 		// Gear shift toggle

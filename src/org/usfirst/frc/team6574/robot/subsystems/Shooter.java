@@ -10,18 +10,25 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Shooter extends Subsystem {
 
-	Spark left;
-	Spark right;
+	Spark left1;
+	Spark left2;
+	Spark right1;
+	Spark right2;
 	
 	DoubleSolenoid lifter;
 	DoubleSolenoid loader;
 	
 	public Shooter() {
-		left = new Spark(RobotMap.shooter.LEFT_PWM_NUM);
-		right = new Spark(RobotMap.shooter.RIGHT_PWM_NUM);
+		left1 = new Spark(RobotMap.shooter.LEFT_1_PWM_NUM);
+		left2 = new Spark(RobotMap.shooter.LEFT_2_PWM_NUM);
+		right1 = new Spark(RobotMap.shooter.RIGHT_1_PWM_NUM);
+		right2 = new Spark(RobotMap.shooter.RIGHT_2_PWM_NUM);
 		
 		lifter = new DoubleSolenoid(RobotMap.shooter.RAISE_PCN_ID, RobotMap.shooter.LOWER_PCN_ID);
 		loader = new DoubleSolenoid(RobotMap.shooter.LOAD_PCN_ID, RobotMap.shooter.UNLOAD_PCN_ID);
+		
+		lower();
+		unload();
 	}
 	
 	@Override
@@ -30,23 +37,17 @@ public class Shooter extends Subsystem {
 	}
 	
 	public void spin(double val) {
-		left.set(-val);
-		right.set(val);
-	}
-	
-	public void spinForward(double val) {
-		left.set(-val);
-		right.set(val);
-	}
-	
-	public void spinBackward(double val) {
-		left.set(val);
-		right.set(-val);
+		left1.set(-val);
+		left2.set(-val);
+		right1.set(val);
+		right2.set(val);
 	}
 	
 	public void stop() {
-		left.stopMotor();
-		right.stopMotor();
+		left1.stopMotor();
+		left2.stopMotor();
+		right1.stopMotor();
+		right2.stopMotor();
 	}
 	
 	public void load() {
@@ -69,4 +70,9 @@ public class Shooter extends Subsystem {
 	public boolean getRaised() {
 		return lifter.get() == Value.kForward;
 	}
+	
+	public boolean getLoaded() {
+		return loader.get() == Value.kForward;
+	}
+	
 }

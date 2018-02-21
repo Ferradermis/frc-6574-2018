@@ -13,7 +13,11 @@ public class Constants {
 	/**
 	 * The default straight driving speed used for autonomous movement.
 	 */
-	public static final double AUTO_SPEED = 0.7;
+	public static final double AUTO_DRIVE_SPEED = 0.4;
+	
+	public static final double AUTO_ROTATE_SPEED = 0.3;
+	
+	public static final double UNLOAD_TIME = 1.0;
 	
 	/**
 	 * The speed of the intake arm rollers.
@@ -27,13 +31,6 @@ public class Constants {
 	
 	public static final double ENCODER_PULSE_DISTANCE = 0.0736;
 	
-	/**
-	 * Distances (in inches) of important auto movements
-	 */
-	public static class dist {
-		public static final double WALL_TO_SWITCH_SIDE = 0.0;
-		public static final double WALL_TO_SCALE_SIDE = 0.0;
-		public static final double AUTO_TEST = 240.0;
-	}
+	public static final double SHOOTER_SPEED = 0.7;
 	
 }

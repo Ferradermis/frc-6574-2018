@@ -3,7 +3,6 @@ package org.usfirst.frc.team6574.robot.subsystems;
 import org.usfirst.frc.team6574.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -40,9 +39,6 @@ public class DriveTrain extends Subsystem {
 		frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
 		backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
 		backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
-		
-		//frontLeft.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-		//frontRight.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 
 		compressor = new Compressor();
 		compressor.start();
@@ -60,40 +56,24 @@ public class DriveTrain extends Subsystem {
 	protected void initDefaultCommand() {
 		
 	}
-	
+
 	/**
-	 * Sets the speed of the front left motor.
+	 * Sets the speeds of the left motors.
 	 * 
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
-	public void frontLeft(double speed) {
+	public void left(double speed) {
 		frontLeft.set(ControlMode.PercentOutput, -speed);
-	}
-	
-	/**
-	 * Sets the speed of the front right motor.
-	 * 
-	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
-	 */
-	public void frontRight(double speed) {
-		frontRight.set(ControlMode.PercentOutput, speed);
-	}
-	
-	/**
-	 * Sets the speed of the back left motor.
-	 * 
-	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
-	 */
-	public void backLeft(double speed) {
 		backLeft.set(ControlMode.PercentOutput, -speed);
 	}
 	
 	/**
-	 * Sets the speed of the back right motor.
+	 * Sets the speeds of the right motors.
 	 * 
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
-	public void backRight(double speed) {
+	public void right(double speed) {
+		frontRight.set(ControlMode.PercentOutput, speed);
 		backRight.set(ControlMode.PercentOutput, speed);
 	}
 	
@@ -103,36 +83,30 @@ public class DriveTrain extends Subsystem {
 	 * @param speed	a double in the range -1 to 1 indicating the percent of max speed, negative for reverse
 	 */
 	public void set(double speed) {
-		frontLeft(speed);
-		frontRight(speed);
-		backLeft(speed);
-		backRight(speed);
+		left(speed);
+		right(speed);
 	}
 	
 	/**
 	 * Stops all drive train motors.
 	 */
 	public void stop() {
-		frontLeft.set(ControlMode.PercentOutput, 0);
-		frontRight.set(ControlMode.PercentOutput, 0);
-		backLeft.set(ControlMode.PercentOutput, 0);
-		backRight.set(ControlMode.PercentOutput, 0);
+		left(0);
+		right(0);
 	}
 	
 	/**
 	 * Stops the drive train's left motors.
 	 */
 	public void stopLeft() {
-		frontLeft.set(ControlMode.PercentOutput, 0);
-		backLeft.set(ControlMode.PercentOutput, 0);
+		left(0);
 	}
 	
 	/**
 	 * Stops the drive train's right motors.
 	 */
 	public void stopRight() {
-		frontRight.set(ControlMode.PercentOutput, 0);
-		backRight.set(ControlMode.PercentOutput, 0);
+		right(0);
 	}
 	
 	/**
@@ -246,10 +220,8 @@ public class DriveTrain extends Subsystem {
 	}
 
 	public void rotate(double d) {	
-		frontLeft(d);
-		backLeft(d);
-		frontRight(-d);
-		backRight(-d);
+		left(d);
+		right(-d);
 	}
 	
 }

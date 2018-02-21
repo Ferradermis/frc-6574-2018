@@ -44,7 +44,7 @@ public class Controls {
 		/**
 		 * Controller button number used to toggle shooter wheel spinning.
 		 */
-		public static final int SHOOTER_SPIN_TOGGLE = 4;
+		public static final int TOGGLE_SHOOTER_SPIN = 4;
 		
 		/**
 		 * Controller button number used to toggle deployment of the intake mechanism.
@@ -64,12 +64,12 @@ public class Controls {
 		/**
 		 * Controller button number used to toggle camera feeds.
 		 */
-		public static final int CAMERA_TOGGLE = 9;
+		public static final int TOGGLE_CAMERA = 9;
 		
 		/**
 		 * Controller button number used to toggle shooter deployment.
 		 */
-		public static final int SHOOTER_DEPLOY_TOGGLE = 1;
+		public static final int TOGGLE_SHOOTER_DEPLOY = 1;
 		
 		/**
 		 * Controller button number used to shoot a cube.

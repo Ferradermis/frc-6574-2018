@@ -14,35 +14,9 @@ package org.usfirst.frc.team6574.robot;
  * floating around.
  */
 public class RobotMap {
-	
+		
 	/**
-	 * The IP address of the radio on the robot's network
-	 */
-	public static final String RADIO_IP = "10.65.74.1";
-	/**
-	 * The IP address of the RoboRio on the robot's network
-	 */
-	public static final String RIO_IP = "10.65.74.2";
-	/**
-	 * The IP address of the Raspberry Pi on the robot's network
-	 */
-	public static final String PI_IP = "10.65.74.5";
-	
-	/**
-	 * The CAN ID value assigned to the Power Distribution Panel.
-	 */
-	public static final int PDP_CAN_ID = -1;
-	/**
-	 * The CAN ID value assigned to the RoboRio.
-	 */
-	public static final int RIO_CAN_ID = -1;
-	/**
-	 * The CAN ID value assigned to the Pneumatics Control Module.
-	 */
-	public static final int PCM_CAN_ID = -1;
-	
-	/**
-	 * The robot's gyroscope ID .
+	 * The robot's gyroscope ID.
 	 */
 	public static final int GYRO_ID = 0;
 	
@@ -58,7 +32,6 @@ public class RobotMap {
 		 * The USB ID value assigned to the right or secondary joystick.
 		 */
 		public static final int RIGHT_JOYSTICK_USB_NUM = 1;
-		
 		/**
 		 * The USB ID value assigned to the game controller.
 		 */
@@ -70,16 +43,15 @@ public class RobotMap {
 	 */
 	public static class shooter {
 		/**
-		 * The PWM output number associated with the shooter's left Spark motor controller.
+		 * The PWM output number associated with the shooter's left Spark motor controllers.
 		 */
-		public static final int LEFT_PWM_NUM = 0;
+		public static final int LEFT_1_PWM_NUM = 0;
+		public static final int LEFT_2_PWM_NUM = 0;
 		/**
-		 * The PWM output number associated with the shooter's right Spark motor controller.
+		 * The PWM output number associated with the shooter's right Spark motor controllers.
 		 */
-		public static final int RIGHT_PWM_NUM = 1;
-		
-		public static final int LEFT_PCN_ID = -1;
-		public static final int RIGHT_PCN_ID = -1;
+		public static final int RIGHT_1_PWM_NUM = 0;
+		public static final int RIGHT_2_PWM_NUM = 0;
 		
 		public static final int LOAD_PCN_ID = -1;
 		public static final int UNLOAD_PCN_ID = -1;
@@ -108,7 +80,6 @@ public class RobotMap {
 		 * The CAN ID assigned to the back right Talon SRX motor controller.
 		 */
 		public static final int BACK_RIGHT_CAN_ID = 0;
-		
 		/**
 		 * The PCN port for the solenoid to disengage the drive shifting mechanism.
 		 */
@@ -126,12 +97,11 @@ public class RobotMap {
 		/**
 		 * The PWM output number associated with the intake's left Spark motor controller.
 		 */
-		public static final int LEFT_PWM_NUM = 1;
+		public static final int LEFT_PWM_NUM = 0;
 		/**
 		 * The PWM output number associated with the intake's right Spark motor controller.
 		 */
-		public static final int RIGHT_PWM_NUM = 0;
-		
+		public static final int RIGHT_PWM_NUM = 1;
 		/**
 		 * The PCN port for the solenoid to deploy the intake mechanism.
 		 */
@@ -154,28 +124,6 @@ public class RobotMap {
 		 * The PWM output number associated with the conveyor's right Spark motor controller.
 		 */
 		public static final int RIGHT_PWM_NUM = 3;
-	}
-	
-	/**
-	 * Map values associated with the robot's encoders.
-	 */
-	public static class encoder {
-		/**
-		 * The digital input channel associated with the left drive train encoder's A channel.
-		 */
-		public static final int LEFT_A_CHANNEL = 0;
-		/**
-		 * The digital input channel associated with the left drive train encoder's B channel.
-		 */
-		public static final int LEFT_B_CHANNEL = 0;
-		/**
-		 * The digital input channel associated with the right drive train encoder's A channel.
-		 */
-		public static final int RIGHT_A_CHANNEL = 0;
-		/**
-		 * The digital input channel associated with the right drive train encoder's B channel.
-		 */
-		public static final int RIGHT_B_CHANNEL = 0;
 	}
 	
 }
