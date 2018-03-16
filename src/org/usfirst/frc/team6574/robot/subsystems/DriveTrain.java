@@ -6,10 +6,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 /**
@@ -18,14 +16,12 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
  * 
  * @author Zach Brantmeier
  */
-public class DriveTrain extends Subsystem {
+public class DriveTrain {
 	
 	TalonSRX frontLeft;
 	TalonSRX frontRight;
 	TalonSRX backLeft;
 	TalonSRX backRight;
-	
-	Compressor compressor;
 	
 	DoubleSolenoid shifter;
 	
@@ -39,22 +35,13 @@ public class DriveTrain extends Subsystem {
 		frontRight = new TalonSRX(RobotMap.driveTrain.FRONT_RIGHT_CAN_ID);
 		backLeft = new TalonSRX(RobotMap.driveTrain.BACK_LEFT_CAN_ID);
 		backRight = new TalonSRX(RobotMap.driveTrain.BACK_RIGHT_CAN_ID);
-
-		compressor = new Compressor();
-		compressor.start();
-		compressor.setClosedLoopControl(true);
 		
 		gyro = new ADXRS450_Gyro();
 		gyro.reset();
 		
-		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCN_ID, RobotMap.driveTrain.SHIFT_ON_PCN_ID);
+		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCM_ID, RobotMap.driveTrain.SHIFT_ON_PCM_ID);
 		
 		engageShifter();
-	}
-
-	@Override
-	protected void initDefaultCommand() {
-		
 	}
 
 	/**
@@ -219,6 +206,11 @@ public class DriveTrain extends Subsystem {
 		gyro.calibrate();
 	}
 
+	/**
+	 * Rotates the robot at a constant speed.
+	 * 
+	 * @param d	a double indicating the speed at which to rotate
+	 */
 	public void rotate(double d) {	
 		left(d);
 		right(-d);

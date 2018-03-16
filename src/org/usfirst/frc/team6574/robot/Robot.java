@@ -12,6 +12,7 @@ import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.Intake;
 import org.usfirst.frc.team6574.robot.subsystems.Shooter;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -32,6 +33,8 @@ public class Robot extends TimedRobot {
 	public static final Intake intake = new Intake();
 	public static final Conveyor conveyor = new Conveyor();
 	public static final Shooter shooter = new Shooter();
+	
+	public static final Compressor compressor = new Compressor();
 	
 	public Joystick leftJoystick = new Joystick(RobotMap.input.LEFT_JOYSTICK_USB_NUM);
 	public Joystick rightJoystick = new Joystick(RobotMap.input.RIGHT_JOYSTICK_USB_NUM);
@@ -109,6 +112,9 @@ public class Robot extends TimedRobot {
 		distanceMoved = 0;
 		drive.resetGyro();
 		autoStage = 0;
+	
+		compressor.start();
+		compressor.setClosedLoopControl(true);
 		
 		//shooter.unload();
 		//shooter.lower();
@@ -225,6 +231,9 @@ public class Robot extends TimedRobot {
 		pressingShooterSpin = false;
 		oneJoystick = false;
 		
+		compressor.start();
+		compressor.setClosedLoopControl(true);
+		
 		t.reset();
 		t.start();
 	}
@@ -320,6 +329,7 @@ public class Robot extends TimedRobot {
 		if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_DEPLOY)) {
 			if (!pressingShooter) {
 				if (shooter.getRaised()) {
+					// [! DELAY FOR INTAKE RETRACT BEFORE SHOOTING]
 					shooter.lower();
 					intake.retract();
 				} else {
@@ -337,7 +347,7 @@ public class Robot extends TimedRobot {
 		//
 		if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_SPIN)) {
 			if (!pressingShooterSpin) {
-				shooter.spin(Constants.SHOOTER_SPEED);
+				shooter.spinShooter(Constants.SHOOTER_SPEED);
 				pressingShooterSpin = true;
 			} else {
 				shooter.stop();
@@ -402,10 +412,10 @@ public class Robot extends TimedRobot {
 		// Intake spinning
 		//
 		if (controller.getRawButton(Controls.controller.INTAKE_IN)) {
-			intake.spin(Constants.INTAKE_SPEED);
+			intake.spinIntake(Constants.INTAKE_SPEED);
 			conveyor.spin(Constants.CONVEYOR_SPEED);
 		} else if (controller.getRawButton(Controls.controller.INTAKE_OUT)) {
-			intake.spin(-Constants.INTAKE_SPEED);
+			intake.spinIntake(-Constants.INTAKE_SPEED);
 			conveyor.spin(-Constants.CONVEYOR_SPEED);
 		} else {
 			intake.stop();
@@ -421,6 +431,18 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Left encoder velocity", drive.getLeftVelocity());
 		SmartDashboard.putNumber("Right encoder velocity", drive.getRightVelocity());
 		SmartDashboard.putNumber("Gyro angle", drive.getGyroAngle());
+		
+		if (shooter.getRaised()) {
+			SmartDashboard.putString("Shooter status", "RAISED");
+		} else {
+			SmartDashboard.putString("Shooter status", "LOWERED");
+		}
+		
+		if (intake.getDeployed()) {
+			SmartDashboard.putString("Intake status", "DEPLOYED");
+		} else {
+			SmartDashboard.putString("Intake status", "RETRACTED");
+		}
 	}
 
 	/**

@@ -3,9 +3,8 @@ package org.usfirst.frc.team6574.robot.subsystems;
 import org.usfirst.frc.team6574.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Conveyor extends Subsystem {
+public class Conveyor {
 
 	Spark leftRoller;
 	Spark rightRoller;
@@ -16,11 +15,6 @@ public class Conveyor extends Subsystem {
 	public Conveyor() {
 		leftRoller = new Spark(RobotMap.conveyor.LEFT_PWM_NUM);
 		rightRoller = new Spark(RobotMap.conveyor.RIGHT_PWM_NUM);
-	}
-
-	@Override
-	protected void initDefaultCommand() {
-		
 	}
 	
 	/**

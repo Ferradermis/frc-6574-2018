@@ -53,11 +53,11 @@ public class RobotMap {
 		public static final int RIGHT_1_PWM_NUM = 0;
 		public static final int RIGHT_2_PWM_NUM = 0;
 		
-		public static final int LOAD_PCN_ID = -1;
-		public static final int UNLOAD_PCN_ID = -1;
+		public static final int LOAD_PCM_ID = -1;
+		public static final int UNLOAD_PCM_ID = -1;
 		
-		public static final int RAISE_PCN_ID = -1;
-		public static final int LOWER_PCN_ID = -1;
+		public static final int RAISE_PCM_ID = -1;
+		public static final int LOWER_PCM_ID = -1;
 	}
 	
 	/**
@@ -83,11 +83,11 @@ public class RobotMap {
 		/**
 		 * The PCN port for the solenoid to disengage the drive shifting mechanism.
 		 */
-		public static final int SHIFT_OFF_PCN_ID = 0;
+		public static final int SHIFT_OFF_PCM_ID = 0;
 		/**
 		 * The PCN port for the solenoid to engage the drive shifting mechanism.
 		 */
-		public static final int SHIFT_ON_PCN_ID = 1;
+		public static final int SHIFT_ON_PCM_ID = 1;
 	}
 	
 	/**
@@ -105,11 +105,11 @@ public class RobotMap {
 		/**
 		 * The PCN port for the solenoid to deploy the intake mechanism.
 		 */
-		public static final int DEPLOY_PCN_ID = 2;
+		public static final int DEPLOY_PCM_ID = 2;
 		/**
 		 * The PCN port for the solenoid to retract mechanism.
 		 */
-		public static final int RETRACT_PCN_ID = 3;
+		public static final int RETRACT_PCM_ID = 3;
 	}
 	
 	/**

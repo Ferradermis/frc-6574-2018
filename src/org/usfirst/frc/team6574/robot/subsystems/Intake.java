@@ -5,9 +5,8 @@ import org.usfirst.frc.team6574.robot.RobotMap;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Intake extends Subsystem {
+public class Intake {
 
 	Spark leftArm;
 	Spark rightArm;
@@ -21,12 +20,7 @@ public class Intake extends Subsystem {
 		leftArm = new Spark(RobotMap.intake.LEFT_PWM_NUM);
 		rightArm = new Spark(RobotMap.intake.RIGHT_PWM_NUM);
 		
-		deploy = new DoubleSolenoid(RobotMap.intake.DEPLOY_PCN_ID, RobotMap.intake.RETRACT_PCN_ID);
-	}
-
-	@Override
-	protected void initDefaultCommand() {
-		
+		deploy = new DoubleSolenoid(RobotMap.intake.DEPLOY_PCM_ID, RobotMap.intake.RETRACT_PCM_ID);
 	}
 	
 	/**
@@ -59,7 +53,7 @@ public class Intake extends Subsystem {
 	 * 
 	 * @param speed	 a double containing the percent output
 	 */
-	public void spin(double speed) {
+	public void spinIntake(double speed) {
 		leftArm.set(speed);
 		rightArm.set(-speed);
 	}
@@ -70,15 +64,6 @@ public class Intake extends Subsystem {
 	public void stop() {
 		leftArm.stopMotor();
 		rightArm.stopMotor();
-	}
-	
-	/**
-	 * Returns the speed of the intake's arm's rollers.
-	 * 
-	 * @return	a double containing the percent output
-	 */
-	public double getSpin() {
-		return leftArm.get();
 	}
 	
 	/**
