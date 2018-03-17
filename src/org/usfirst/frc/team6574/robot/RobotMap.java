@@ -38,6 +38,17 @@ public class RobotMap {
 		public static final int CONTROLLER_USB_NUM = 2;
 	}
 	
+	public static class camera {
+		/**
+		 * The USB ID value assigned to the forward-facing camera.
+		 */
+		public static final int FORWARD_USB_NUM = 0;
+		/**
+		 * The USB ID value assigned to the backward-facing camera.
+		 */
+		public static final int BACKWARD_USB_NUM = 1;
+	}
+	
 	/**
 	 * Map values associated with the robot's shooter mechanism.
 	 */

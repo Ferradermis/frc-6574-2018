@@ -33,4 +33,6 @@ public class Constants {
 	
 	public static final double SHOOTER_SPEED = 0.7;
 	
+	public static final double MULTIPLY_BY_THIS_TO_MAKE_INCHES = 424.7157;
+	
 }
