@@ -40,8 +40,6 @@ public class DriveTrain {
 		gyro.reset();
 		
 		shifter = new DoubleSolenoid(RobotMap.driveTrain.SHIFT_OFF_PCM_ID, RobotMap.driveTrain.SHIFT_ON_PCM_ID);
-		
-		engageShifter();
 	}
 
 	/**
@@ -114,7 +112,7 @@ public class DriveTrain {
 	 * Toggles the drive train's gear shifting mechanism between states.
 	 */
 	public void toggleShifter() {
-		if (isShifted()) {
+		if (getShifted()) {
 			disengageShifter();
 		} else {
 			engageShifter();
@@ -126,7 +124,7 @@ public class DriveTrain {
 	 * 
 	 * @return	a boolean containing the shifted state
 	 */
-	public boolean isShifted() {
+	public boolean getShifted() {
 		return shifter.get() == Value.kForward;
 	}
 	

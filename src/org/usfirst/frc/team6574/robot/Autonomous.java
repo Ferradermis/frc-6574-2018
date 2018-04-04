@@ -9,7 +9,6 @@ public class Autonomous {
 	public static double distanceMoved = 0;
 	public static Timer autoTimer = new Timer();
 	
-	
 	public static void switchLeftLeft() {
 		if (autoStage == 0) {
 			if (distanceMoved < 120 * Constants.MULTIPLY_BY_THIS_TO_MAKE_INCHES) {
@@ -28,20 +27,23 @@ public class Autonomous {
 			} else {
 				Robot.drive.stop();
 				Robot.drive.resetGyro();
-				autoStage = 2;
 				autoTimer.reset();
+				Robot.shooter.lower();
+				autoStage = 2;
 			}
 		} else if (autoStage == 2) {
-			if (autoTimer.get() < 2) {
+			if (autoTimer.get() < 2.5) {
 				Robot.drive.set(-Constants.AUTO_DRIVE_SPEED);
 			} else {
 				Robot.drive.stop();
 			}
 		} else if (autoStage == 3) {
+			Robot.shooter.spinShooter(Constants.SHOOTER_SPEED_SWITCH);
 			autoTimer.stop();
 			autoTimer.reset();
 			Robot.drive.stop();
 			Robot.drive.clearEncoders();
+			Robot.shooter.load();
 		}
 	}
 	
@@ -63,20 +65,23 @@ public class Autonomous {
 			} else {
 				Robot.drive.stop();
 				Robot.drive.resetGyro();
-				autoStage = 2;
 				autoTimer.reset();
+				Robot.shooter.lower();
+				autoStage = 2;
 			}
 		} else if (autoStage == 2) {
-			if (autoTimer.get() < 2) {
+			if (autoTimer.get() < 2.5) {
 				Robot.drive.set(-Constants.AUTO_DRIVE_SPEED);
 			} else {
 				Robot.drive.stop();
 			}
 		} else if (autoStage == 3) {
+			Robot.shooter.spinShooter(Constants.SHOOTER_SPEED_SWITCH);
 			autoTimer.stop();
 			autoTimer.reset();
 			Robot.drive.stop();
 			Robot.drive.clearEncoders();
+			Robot.shooter.load();
 		}
 	}
 	
@@ -99,6 +104,39 @@ public class Autonomous {
 				Robot.drive.resetGyro();
 				Robot.drive.clearEncoders();
 				autoStage = 1;
+			}
+		}
+	}
+	
+	public static void midAutoLine() {
+		if (autoStage == 0) {
+			if (distanceMoved < 4 * Constants.MULTIPLY_BY_THIS_TO_MAKE_INCHES) {
+				distanceMoved = Math.abs(Robot.drive.getEncoderDist());
+				Robot.drive.set(Constants.AUTO_DRIVE_SPEED);
+			} else {
+				Robot.drive.stop();
+				Robot.drive.resetGyro();
+				Robot.drive.clearEncoders();
+				autoStage = 1;
+			}
+		} else if (autoStage == 1) {
+			if (Robot.drive.getGyroAngle() < 40) {
+				Robot.drive.rotate(Constants.AUTO_ROTATE_SPEED);
+			} else {
+				Robot.drive.stop();
+				Robot.drive.resetGyro();
+				Robot.drive.clearEncoders();
+				autoStage = 2;
+			}
+		} else if (autoStage == 2) {
+			if (distanceMoved < 100 * Constants.MULTIPLY_BY_THIS_TO_MAKE_INCHES) {
+				distanceMoved = Math.abs(Robot.drive.getEncoderDist());
+				Robot.drive.set(Constants.AUTO_DRIVE_SPEED);
+			} else {
+				Robot.drive.stop();
+				Robot.drive.resetGyro();
+				Robot.drive.clearEncoders();
+				autoStage = 3;
 			}
 		}
 	}

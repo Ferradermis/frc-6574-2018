@@ -34,6 +34,11 @@ public class Controls {
 		 * Joystick button number used to toggle between single and dual joystick control modes.
 		 */
 		public static final int TOGGLE_DUAL = 7;
+		
+		/**
+		 * Joystick button number used to toggle between forward and backwarding facing camera feeds.
+		 */
+		public static final int TOGGLE_CAMERA = 1;
 	}
 	
 	/**
@@ -60,11 +65,6 @@ public class Controls {
 		 * Controller button number used to spin the intake's arm rollers backward.
 		 */
 		public static final int INTAKE_OUT = 8;
-		
-		/**
-		 * Controller button number used to toggle camera feeds.
-		 */
-		public static final int TOGGLE_CAMERA = 9;
 		
 		/**
 		 * Controller button number used to toggle shooter deployment.

@@ -36,17 +36,18 @@ public class RobotMap {
 		 * The USB ID value assigned to the game controller.
 		 */
 		public static final int CONTROLLER_USB_NUM = 2;
+		public static final int DRIVE_CONTROLLER_USB_NUM = 3;
 	}
 	
 	public static class camera {
 		/**
 		 * The USB ID value assigned to the forward-facing camera.
 		 */
-		public static final int FORWARD_USB_NUM = 0;
+		public static final int FORWARD_USB_NUM = 1;
 		/**
 		 * The USB ID value assigned to the backward-facing camera.
 		 */
-		public static final int BACKWARD_USB_NUM = 1;
+		public static final int BACKWARD_USB_NUM = 0;
 	}
 	
 	/**
@@ -56,19 +57,19 @@ public class RobotMap {
 		/**
 		 * The PWM output number associated with the shooter's left Spark motor controllers.
 		 */
-		public static final int LEFT_1_PWM_NUM = 0;
-		public static final int LEFT_2_PWM_NUM = 0;
+		public static final int LEFT_TOP_PWM_NUM = 6; // or 7
+		public static final int LEFT_BOTTOM_PWM_NUM = 7; // or 6
 		/**
 		 * The PWM output number associated with the shooter's right Spark motor controllers.
 		 */
-		public static final int RIGHT_1_PWM_NUM = 0;
-		public static final int RIGHT_2_PWM_NUM = 0;
+		public static final int RIGHT_TOP_PWM_NUM = 4; // or 5
+		public static final int RIGHT_BOTTOM_PWM_NUM = 5; // or 4
 		
-		public static final int LOAD_PCM_ID = -1;
-		public static final int UNLOAD_PCM_ID = -1;
+		public static final int LOAD_PCM_ID = 6; // or 7
+		public static final int UNLOAD_PCM_ID = 7; // or 6
 		
-		public static final int RAISE_PCM_ID = -1;
-		public static final int LOWER_PCM_ID = -1;
+		public static final int RAISE_PCM_ID = 4; // or 5
+		public static final int LOWER_PCM_ID = 5; // or 4
 	}
 	
 	/**
@@ -114,11 +115,11 @@ public class RobotMap {
 		 */
 		public static final int RIGHT_PWM_NUM = 1;
 		/**
-		 * The PCN port for the solenoid to deploy the intake mechanism.
+		 * The PCM port for the solenoid to deploy the intake mechanism.
 		 */
 		public static final int DEPLOY_PCM_ID = 2;
 		/**
-		 * The PCN port for the solenoid to retract mechanism.
+		 * The PCM port for the solenoid to retract mechanism.
 		 */
 		public static final int RETRACT_PCM_ID = 3;
 	}

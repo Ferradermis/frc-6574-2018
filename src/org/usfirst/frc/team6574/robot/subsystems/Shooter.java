@@ -1,6 +1,5 @@
 package org.usfirst.frc.team6574.robot.subsystems;
 
-import org.usfirst.frc.team6574.robot.Robot;
 import org.usfirst.frc.team6574.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -9,25 +8,22 @@ import edu.wpi.first.wpilibj.Spark;
 
 public class Shooter {
 
-	Spark left1;
-	Spark left2;
-	Spark right1;
-	Spark right2;
+	Spark leftTop;
+	Spark leftBottom;
+	Spark rightTop;
+	Spark rightBottom;
 	
 	DoubleSolenoid lifter;
 	DoubleSolenoid loader;
 	
 	public Shooter() {
-		left1 = new Spark(RobotMap.shooter.LEFT_1_PWM_NUM);
-		left2 = new Spark(RobotMap.shooter.LEFT_2_PWM_NUM);
-		right1 = new Spark(RobotMap.shooter.RIGHT_1_PWM_NUM);
-		right2 = new Spark(RobotMap.shooter.RIGHT_2_PWM_NUM);
+		leftTop = new Spark(RobotMap.shooter.LEFT_TOP_PWM_NUM);
+		leftBottom = new Spark(RobotMap.shooter.LEFT_BOTTOM_PWM_NUM);
+		rightTop = new Spark(RobotMap.shooter.RIGHT_TOP_PWM_NUM);
+		rightBottom = new Spark(RobotMap.shooter.RIGHT_BOTTOM_PWM_NUM);
 		
 		lifter = new DoubleSolenoid(RobotMap.shooter.RAISE_PCM_ID, RobotMap.shooter.LOWER_PCM_ID);
 		loader = new DoubleSolenoid(RobotMap.shooter.LOAD_PCM_ID, RobotMap.shooter.UNLOAD_PCM_ID);
-		
-		lower();
-		unload();
 	}
 	
 	/**
@@ -36,20 +32,20 @@ public class Shooter {
 	 * @param val	a double containing the speed at which to spin, will functionally never need to be spun backwards but no hard restriction
 	 */
 	public void spinShooter(double val) {
-		left1.set(-val);
-		left2.set(-val);
-		right1.set(val);
-		right2.set(val);
+		leftTop.set(val);
+		leftBottom.set(val);
+		rightTop.set(val);
+		rightBottom.set(val);
 	}
 	
 	/**
 	 * Stops all motors on the shooter.
 	 */
 	public void stop() {
-		left1.stopMotor();
-		left2.stopMotor();
-		right1.stopMotor();
-		right2.stopMotor();
+		leftTop.stopMotor();
+		leftBottom.stopMotor();
+		rightTop.stopMotor();
+		rightBottom.stopMotor();
 	}
 	
 	/**
@@ -70,8 +66,7 @@ public class Shooter {
 	 * Raises the shooter subsystem into shooting position, and forces the intake into deployed status to prevent overlap.
 	 */
 	public void raise() {
-		lifter.set(Value.kForward);
-		Robot.intake.deploy();
+		lifter.set(Value.kReverse);
 	}
 	
 	/**
@@ -87,7 +82,7 @@ public class Shooter {
 	 * @return	a boolean indicating whether or not the shooter is raised, with true meaning raised into shooting position and false meaning it is in its passive position
 	 */
 	public boolean getRaised() {
-		return lifter.get() == Value.kForward;
+		return lifter.get() == Value.kReverse;
 	}
 	
 	/**
@@ -97,6 +92,13 @@ public class Shooter {
 	 */
 	public boolean getLoaded() {
 		return loader.get() == Value.kForward;
+	}
+	
+	public boolean getSpinning() {
+		if (leftTop.get() != 0.0 || rightTop.get() != 0.0 || leftBottom.get() != 0.0 || rightBottom.get() != 0.0) {
+			return true;
+		}
+		return false;
 	}
 	
 }
