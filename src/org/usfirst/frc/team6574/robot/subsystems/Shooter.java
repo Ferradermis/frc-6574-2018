@@ -38,6 +38,16 @@ public class Shooter {
 		rightBottom.set(val);
 	}
 	
+	public void spinUpper(double val) {
+		leftTop.set(val);
+		rightTop.set(val);
+	}
+	
+	public void spinLower(double val) {
+		leftBottom.set(val);
+		rightBottom.set(val);
+	}
+	
 	/**
 	 * Stops all motors on the shooter.
 	 */

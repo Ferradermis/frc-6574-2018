@@ -7,11 +7,7 @@
 
 package org.usfirst.frc.team6574.robot;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team6574.robot.subsystems.Conveyor;
 import org.usfirst.frc.team6574.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team6574.robot.subsystems.Intake;
@@ -60,16 +56,19 @@ public class Robot extends TimedRobot {
 	boolean pressingJoystick = false;
 	boolean pressingCamera = false;
 	boolean pressingShooterSpin = false;
+	boolean pressingBooper = false;
 	
 	boolean oneJoystick = false;
 	boolean controllerDrive = false;
 	boolean frontCamera = true;
 
-	int position = 0;
-	boolean switchOwnership = false;
+	String robotPos;
+	String ownership;
 	
 	Timer reloadTimer = new Timer();
+	Timer spinUpTimer = new Timer();
 	Timer intakeMoveTimer = new Timer();
+	Timer booperTimer = new Timer();
 	
 	double getLeftY() {
 		if (controllerDrive) {
@@ -92,36 +91,33 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		
+		autoPos.addDefault("LINE", "LINE");
 		autoPos.addObject("LEFT", "LEFT");
 		autoPos.addObject("MID", "MID");
 		autoPos.addObject("RIGHT", "RIGHT");
+		SmartDashboard.putData("Autonomous", autoPos);
 		
 		drive.calibrateGyro();
+		
 		new Thread(() -> {
-			UsbCamera forwardCamera = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.FORWARD_USB_NUM);
-			UsbCamera backwardCamera = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.BACKWARD_USB_NUM);
-			CvSink forwardSink = null;
-			if (forwardCamera != null) {
-				forwardCamera.setResolution(640, 480);
-				forwardSink = CameraServer.getInstance().getVideo(forwardCamera);
-			}
-			CvSink backwardSink = null;
-			if (forwardCamera != null) {
-				backwardCamera.setResolution(640, 480);
-				backwardSink = CameraServer.getInstance().getVideo(backwardCamera);
-			}
-			CvSource outputStream = CameraServer.getInstance().putVideo("Camera Feed", 640, 480);
+			UsbCamera forward = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.FORWARD_USB_NUM);
+			UsbCamera backward = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.BACKWARD_USB_NUM);
+			//forward.setFPS(fps);
+			//forward.setResolution(width, height);
+			forward.setResolution(640, 480);
+			backward.setResolution(640, 480);
+			//forward.setFPS(15);
+			//backward.setFPS(15);
+			CvSink forwardSink = CameraServer.getInstance().getVideo(forward);
+			CvSink backwardSink = CameraServer.getInstance().getVideo(backward);
+			CvSource outputStream = CameraServer.getInstance().putVideo("Working Camera Feed", 640, 480);
 			Mat image = new Mat();
-			while (!Thread.interrupted() && forwardCamera != null && backwardCamera != null && forwardSink != null && backwardSink != null) {
+			while (!Thread.interrupted()) {
 				if (frontCamera) {
 					forwardSink.grabFrame(image);
-					/*Imgproc.rectangle(image, new Point(20, 50), new Point(300, 60), new Scalar(255, 255, 255), 50);
-					Imgproc.putText(image, "FORWARD", new Point(40, 55), Core.FONT_HERSHEY_PLAIN, 4, new Scalar(0, 0, 255), 8);*/
 					outputStream.putFrame(image);
 				} else {
 					backwardSink.grabFrame(image);
-					/*Imgproc.rectangle(image, new Point(20, 50), new Point(300, 60), new Scalar(255, 255, 255), 50);
-					Imgproc.putText(image, "BACKWARD", new Point(40, 55), Core.FONT_HERSHEY_PLAIN, 4, new Scalar(0, 0, 255), 8);*/
 					outputStream.putFrame(image);
 				}
 			}
@@ -136,14 +132,13 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		Autonomous.autoStage = 0;
-		Autonomous.distanceMoved = 0.0;
 		drive.clearEncoders();
 		compressor.stop();
 	}
 
 	@Override
 	public void disabledPeriodic() {
-		
+		SmartDashboard.putString("Chosen Auto", autoPos.getSelected());
 	}
 	
 	/**
@@ -153,7 +148,7 @@ public class Robot extends TimedRobot {
 	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
 	 * getString code to get the auto name from the text box below the Gyro
 	 *
-	 * <p>You can add additional auto modes by adding additional commands to the
+	 * You can add additional auto modes by adding additional commands to the
 	 * chooser code above (like the commented example) or additional comparisons
 	 * to the switch structure below with additional strings & commands.
 	 */
@@ -168,27 +163,32 @@ public class Robot extends TimedRobot {
 
 		//position = DriverStation.getInstance().get
 		
-		String positions = DriverStation.getInstance().getGameSpecificMessage();
-		while (positions.equals("")) {
-			positions = DriverStation.getInstance().getGameSpecificMessage();
+		//robotPos = autoPos.getSelected();
+		
+		robotPos = autoPos.getSelected();
+		ownership = DriverStation.getInstance().getGameSpecificMessage();
+		while (ownership.equals("")) {
+			ownership = DriverStation.getInstance().getGameSpecificMessage();
 		}
+		
 		//switchOwnership = (positions.charAt(0) == 'L' && position == 1) || (positions.charAt(0) == 'R' && position == 3);
 		
 		drive.clearEncoders();
 		drive.resetGyro();
 		
 		Autonomous.autoStage = 0;
-		Autonomous.distanceMoved = 0;
 	
 		compressor.start();
 		compressor.setClosedLoopControl(true);
 		
 		//shooter.lower();
 		//intake.retract();
-		drive.engageShifter();
+		drive.shiftLow();
 		
 		//shooter.unload();
 		//shooter.lower();
+		
+		shooter.raise();
 	}
 
 	/**
@@ -196,6 +196,41 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		SmartDashboard.putString("GYRO VALUE", "" + drive.getGyroAngle());
+		if (robotPos.equals("LINE")) {
+			Autonomous.autoLine();
+		} else if (robotPos.equals("LEFT") && ownership.charAt(0) == 'L') {
+			Autonomous.SWITCH.leftFromLeft();
+		} else if (robotPos.equals("MID") && ownership.charAt(0) == 'L') {
+			Autonomous.SWITCH.leftFromCenter();
+		} if (robotPos.equals("MID") && ownership.charAt(0) == 'R') {
+			Autonomous.SWITCH.rightFromCenter();
+		} else if (robotPos.equals("RIGHT") && ownership.charAt(0) == 'R') {
+			Autonomous.SWITCH.rightFromRight();
+		} else {
+			Autonomous.autoLine();
+		}
+		//Autonomous.autoLine();
+		
+		/*if (robotPos.equals("LEFT")) {
+			if (ownership.charAt(1) == 'L') {
+				Autonomous.SCALE.leftFromLeft();
+			} else if (ownership.charAt(0) == 'L') {
+				Autonomous.SWITCH.leftFromLeft();
+			} else {
+				Autonomous.autoLine();
+			}
+		} else if (robotPos.equals("MID")) {
+			
+		} else if (robotPos.equals("RIGHT")) {
+			if (ownership.charAt(1) == 'R') {
+				Autonomous.SCALE.rightFromRight();
+			} else if (ownership.charAt(0) == 'R') {
+				Autonomous.SWITCH.rightFromRight();
+			} else {
+				Autonomous.autoLine();
+			}
+		}*/
 		/*if (!switchOwnership) {
 			if (position == 2) {
 				//Mid turn and auto line
@@ -213,7 +248,7 @@ public class Robot extends TimedRobot {
 				Autonomous.switchRightRight();
 			}
 		}*/
-		Autonomous.sideAutoLine();
+		//Autonomous.autoLine();
 	}
 	
 	@Override
@@ -224,8 +259,14 @@ public class Robot extends TimedRobot {
 		reloadTimer.stop();
 		reloadTimer.reset();
 		
+		spinUpTimer.stop();
+		spinUpTimer.reset();
+		
 		intakeMoveTimer.stop();
 		intakeMoveTimer.reset();
+		
+		booperTimer.stop();
+		booperTimer.reset();
 		
 		drive.clearEncoders();
 		drive.resetGyro();
@@ -236,6 +277,7 @@ public class Robot extends TimedRobot {
 		pressingSpin = false;
 		pressingJoystick = false;
 		pressingShooterSpin = false;
+		pressingBooper = false;
 		oneJoystick = false;
 		
 		compressor.start();
@@ -243,7 +285,8 @@ public class Robot extends TimedRobot {
 		
 		shooter.stop();
 		shooter.unload();
-		drive.disengageShifter();
+		
+		drive.shiftHigh();
 	}
    
 	/**
@@ -329,6 +372,7 @@ public class Robot extends TimedRobot {
 		}
 		
 		if (!controllerDrive) {
+			/*
 			// Gear shift toggle
 			if (leftJoystick.getRawButton(Controls.joystick.TOGGLE_SHIFT)) {
 				if (!pressingShifter) {
@@ -337,6 +381,12 @@ public class Robot extends TimedRobot {
 				}
 			} else {
 				pressingShifter = false;
+			}*/
+			
+			if (leftJoystick.getRawButton(Controls.joystick.TOGGLE_SHIFT)) {
+				drive.shiftLow();
+			} else {
+				drive.shiftHigh();
 			}
 			
 			// Single/dual joystick toggle
@@ -361,9 +411,9 @@ public class Robot extends TimedRobot {
 		} else {
 			//Drive gear shift
 			if (driveController.getRawButton(8)) {
-				drive.engageShifter();
+				drive.shiftHigh();
 			} else {
-				drive.disengageShifter();
+				drive.shiftLow();
 			}
 			
 		}
@@ -408,13 +458,14 @@ public class Robot extends TimedRobot {
 		}*/
 		
 		// Shooter spin toggle
-		if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_SPIN)) {
+		/*if (controller.getRawButton(Controls.controller.TOGGLE_SHOOTER_SPIN)) {
 			if (!pressingShooterSpin) {
 				if (shooter.getSpinning()) {
 					shooter.stop();
 				} else {
 					if (shooter.getRaised()) {
-						shooter.spinShooter(Constants.SHOOTER_SPEED_SCALE);
+						//shooter.spinShooter(Constants.SHOOTER_SPEED_SCALE);
+						shooter.spinUpper(Constants.SHOOTER_SPEED_SCALE);
 					} else {
 						shooter.spinShooter(Constants.SHOOTER_SPEED_SWITCH);
 					}
@@ -423,18 +474,35 @@ public class Robot extends TimedRobot {
 			}
 		} else {
 			pressingShooterSpin = false;
-		}
+		}*/
 		
 		// Shoot
-		if (controller.getRawButton(Controls.controller.SHOOT) && reloadTimer.get() == 0 && shooter.getSpinning()) {
+		if (controller.getRawButton(Controls.controller.SHOOT) && reloadTimer.get() == 0) {
+			if (shooter.getRaised()) {
+				shooter.spinUpper(Constants.SHOOTER_SPEED_SCALE);
+				spinUpTimer.reset();
+				spinUpTimer.start();
+			} else {
+				shooter.spinShooter(Constants.SHOOTER_SPEED_SWITCH);
+				shooter.load();
+				reloadTimer.reset();
+				reloadTimer.start();
+			}
+		}
+		if (reloadTimer.get() > Constants.UNLOAD_TIME) {
+			shooter.unload();
+			shooter.stop();
+			reloadTimer.stop();
+			reloadTimer.reset();
+		}
+		
+		if (spinUpTimer.get() > 0.6) {
+			shooter.spinLower(Constants.SHOOTER_SPEED_SCALE);
 			shooter.load();
 			reloadTimer.reset();
 			reloadTimer.start();
-		}
-		if (shooter.getLoaded() && reloadTimer.get() > Constants.UNLOAD_TIME) {
-			shooter.unload();
-			reloadTimer.stop();
-			reloadTimer.reset();
+			spinUpTimer.stop();
+			spinUpTimer.reset();
 		}
 		
 		// Intake deploy toggle
@@ -452,13 +520,37 @@ public class Robot extends TimedRobot {
 		// Intake spinning
 		if (controller.getRawButton(Controls.controller.INTAKE_IN)) {
 			intake.spinIntake(Constants.INTAKE_SPEED);
-			conveyor.spin(Constants.CONVEYOR_SPEED);
+			//conveyor.spin(Constants.CONVEYOR_SPEED);
 		} else if (controller.getRawButton(Controls.controller.INTAKE_OUT)) {
 			intake.spinIntake(-Constants.INTAKE_SPEED);
-			conveyor.spin(-Constants.CONVEYOR_SPEED);
+			//conveyor.spin(-Constants.CONVEYOR_SPEED);
 		} else {
 			intake.stop();
-			conveyor.stop();
+			//conveyor.stop();
+		}
+		
+		/*if (controller.getRawButton(1)) {
+			conveyor.boop();
+		} else {
+			conveyor.stopBoop();
+		}*/
+		
+		if (controller.getRawButton(1)) {
+			if (!pressingBooper && booperTimer.get() == 0.0) {
+				conveyor.boop();
+				booperTimer.stop();
+				booperTimer.reset();
+				booperTimer.start();
+				pressingBooper = true;
+			}
+		} else {
+			pressingBooper = false;
+		}
+		
+		if (booperTimer.get() > 0.5) {
+			conveyor.stopBoop();
+			booperTimer.stop();
+			booperTimer.reset();
 		}
 		
 		/*
@@ -474,7 +566,7 @@ public class Robot extends TimedRobot {
 		/*
 		if (conveyor.isArmOpening()) {
 			if (conveyor.openLimit.get()) {
-				conveyor.stopArm();ukil
+				conveyor.stopArm();
 			}
 		}*/
 		
@@ -491,27 +583,7 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putString("DRIVE TRAIN: ", drive.getShifted() ? "HIGH SPEED" : "HIGH TORQUE");
 		SmartDashboard.putString("SHOOTER: ", shooter.getRaised() ? "RAISED" : "LOWERED");
 		SmartDashboard.putString("CAMERA: ", frontCamera ? "FRONT VIEW" : "BACK VIEW");	
-		
-		//Camera thread
-		/*
-		new Thread(() -> {
-			UsbCamera forwardCamera = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.FORWARD_USB_NUM);
-			UsbCamera backwardCamera = CameraServer.getInstance().startAutomaticCapture(RobotMap.camera.BACKWARD_USB_NUM);
-			CvSink autonCvSink = CameraServer.getInstance().getVideo(forwardCamera);
-			CvSink teleCvSink = CameraServer.getInstance().getVideo(backwardCamera);
-			CvSource outputStream = CameraServer.getInstance().putVideo("Camera Feed", 1280, 720);
-			Mat forwardImage = new Mat();
-			Mat backwardImage = new Mat();
-			while (!Thread.interrupted()) {
-				if (frontCamera) {
-					autonCvSink.grabFrame(forwardImage);
-					outputStream.putFrame(forwardImage);
-				} else {
-					teleCvSink.grabFrame(backwardImage);
-					outputStream.putFrame(backwardImage);
-				}
-			}
-		}).start();*/
+		SmartDashboard.putString("GYRO", "" + drive.getGyroAngle());
 	}
 
 	/**

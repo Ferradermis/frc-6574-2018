@@ -97,14 +97,14 @@ public class DriveTrain {
 	/**
 	 * Engages the drive train's gear shifting mechanism.
 	 */
-	public void engageShifter() {
+	public void shiftHigh() {
 		shifter.set(Value.kForward);
 	}
 
 	/**
 	 * Disengages the drive train's gear shifting mechanism.
 	 */
-	public void disengageShifter() {
+	public void shiftLow() {
 		shifter.set(Value.kReverse);
 	}
 	
@@ -113,9 +113,9 @@ public class DriveTrain {
 	 */
 	public void toggleShifter() {
 		if (getShifted()) {
-			disengageShifter();
+			shiftLow();
 		} else {
-			engageShifter();
+			shiftHigh();
 		}
 	}
 	
@@ -187,7 +187,7 @@ public class DriveTrain {
 	 * @return	a double containing the drive train's current orientation
 	 */
 	public double getGyroAngle() {
-		return gyro.getAngle();
+		return -gyro.getAngle();
 	}
 	
 	/**
